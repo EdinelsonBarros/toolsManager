@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="setor(setor)">
+  <li class="node"
+      th:attr="data-cod=${setor.setor}">
+
+    <!-- Cabeçalho clicável do setor -->
+	<div class="node-header"
+	     th:attr="data-setor=${setor.setor}"
+	     onclick="toggleSetor(this, this.dataset.setor)">
+	  <span class="toggle-icon">›</span>
+	  <span class="setor-label" th:text="${setor.nomeSetor}"></span>
+	</div>
+
+    <!-- Filhos: subsetores + container para servidores via AJAX -->
+    <ul class="tree children">
+
+      <!-- Container onde o AJAX vai injetar os servidores -->
+      <ul class="servidores-container"></ul>
+
+      <!-- Subsetores renderizados pelo Thymeleaf recursivamente -->
+      <th:block th:each="filho : ${setor.filhos}">
+        <li th:replace="~{setor :: setor(${filho})}"></li>
+      </th:block>
+
+    </ul>
+  </li>
+</th:block>
+
+</body>
+</html>
