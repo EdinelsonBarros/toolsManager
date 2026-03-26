@@ -22,20 +22,7 @@ public class OrganogramaRepository {
     }
 
     public List<Map<String, Object>> buscarServidoresPorSetor(String codSetor) {
-        String sql = "SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, HIERARQUIA_NUM FROM GTO_VW_ORGANOGRAMA_SERVIDORES WHERE SETOR = ? ORDER BY HIERARQUIA_NUM";
+        String sql = "SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, HIERARQUIA_NUM FROM GTO_VWM_ORGANOGRAMA_SERVIDORES WHERE SETOR = ? ORDER BY HIERARQUIA_NUM";
         return dev1JdbcTemplate.queryForList(sql, codSetor);
-    }
-
-    public List<Map<String, Object>> buscarServidoresPorTermo(String termo) {
-        String sql = """
-                SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, NOMESETOR
-                FROM GTO_VW_ORGANOGRAMA_SERVIDORES
-                WHERE UPPER(NOME) LIKE UPPER(?)
-                   OR NUMFUNC LIKE ?
-                ORDER BY NOME
-                FETCH FIRST 20 ROWS ONLY
-                """;
-        String param = "%" + termo + "%";
-        return dev1JdbcTemplate.queryForList(sql, param, param);
     }
 }
