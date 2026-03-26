@@ -160,8 +160,11 @@
     const info = document.createElement('div');
     info.className = 'srv-info';
     info.innerHTML = `
-      <span class="srv-name">${srv.nome}</span>
-      ${srv.nomeCargo ? `<span class="srv-cargo">${srv.nomeCargo}</span>` : ''}
+      <span class="srv-name">${srv.nome} 
+		<span class="srv-cargo">${srv.numfunc}</span>
+	  </span>
+	  
+      ${srv.nomeCargo ? `<span class="srv-cargo">${srv.nomeCargo}</span> ` : ''}
     `;
 
     header.appendChild(avatar);

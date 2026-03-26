@@ -11,7 +11,7 @@
 	     th:attr="data-setor=${setor.setor}"
 	     onclick="toggleSetor(this, this.dataset.setor)">
 	  <span class="toggle-icon">›</span>
-	  <span class="setor-label" th:text="${setor.nomeSetor}"></span>
+	  <span class="setor-label" th:text="|${setor.nomeSetor} - ${setor.setor}|"></span>
 	</div>
 
     <!-- Filhos: subsetores + container para servidores via AJAX -->

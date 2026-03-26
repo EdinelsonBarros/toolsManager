@@ -29,12 +29,12 @@ public class ConnectionService {
     public List<Map<String, Object>> buscaNome() {
         String sql = " SELECT nome FROM FUNCIONARIOS F   WHERE F.NUMERO = 12014389 ";
 
-        return dev1JdbcTemplate.queryForList(sql);
+        return producaoJdbcTemplate.queryForList(sql);
     }
     
     public List<Map<String, Object>> buscaOrganograma() {
     	String sql = " SELECT * FROM GTO_VWM_ORGANOGRAMA_SERVIDORES";
     	
-    	return dev1JdbcTemplate.queryForList(sql);
+    	return producaoJdbcTemplate.queryForList(sql);
     }
 }

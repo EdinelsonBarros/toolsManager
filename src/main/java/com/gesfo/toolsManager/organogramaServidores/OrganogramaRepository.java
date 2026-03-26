@@ -9,20 +9,20 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class OrganogramaRepository {
-	private final JdbcTemplate dev1JdbcTemplate;
+	private final JdbcTemplate producaoJdbcTemplate;
 
     public OrganogramaRepository(
-            @Qualifier("dev1JdbcTemplate") JdbcTemplate dev1JdbcTemplate) {
-        this.dev1JdbcTemplate = dev1JdbcTemplate;
+            @Qualifier("producaoJdbcTemplate") JdbcTemplate producaoJdbcTemplate) {
+        this.producaoJdbcTemplate = producaoJdbcTemplate;
     }
 
     public List<Map<String, Object>> buscarSetores() {
         String sql = "SELECT SETOR, NOMESETOR, PAISETOR, HIERARQUIA_SETORES, HIERARQUIA_NUM FROM GTO_VWM_ORGANOGRAMA_SETORES ORDER BY HIERARQUIA_NUM";
-        return dev1JdbcTemplate.queryForList(sql);
+        return producaoJdbcTemplate.queryForList(sql);
     }
 
     public List<Map<String, Object>> buscarServidoresPorSetor(String codSetor) {
-        String sql = "SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, HIERARQUIA_NUM FROM GTO_VWM_ORGANOGRAMA_SERVIDORES WHERE SETOR = ? ORDER BY HIERARQUIA_NUM";
-        return dev1JdbcTemplate.queryForList(sql, codSetor);
+        String sql = "SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, HIERARQUIA_NUM FROM GTO_VWM_ORGANOGRAMA_SERVIDORES WHERE SETOR = ? ORDER BY HIERARQUIA_SERVIDORES";
+        return producaoJdbcTemplate.queryForList(sql, codSetor);
     }
 }
