@@ -20,7 +20,6 @@ public class OrganogramaService {
 
         Map<String, SetorDTO> mapa = new LinkedHashMap<>();
 
-        // Monta mapa de setores
         for (Map<String, Object> row : rows) {
             SetorDTO dto = new SetorDTO();
             dto.setSetor(str(row, "SETOR"));
@@ -31,7 +30,6 @@ public class OrganogramaService {
             mapa.put(dto.getSetor(), dto);
         }
 
-        // Vincula filhos ao pai
         List<SetorDTO> raizes = new ArrayList<>();
         for (SetorDTO setor : mapa.values()) {
             String codPai = setor.getPaiSetor();
@@ -47,8 +45,17 @@ public class OrganogramaService {
 
     public List<ServidorDTO> buscarServidoresPorSetor(String codSetor) {
         List<Map<String, Object>> rows = repository.buscarServidoresPorSetor(codSetor);
-        List<ServidorDTO> servidores = new ArrayList<>();
+        return mapearServidores(rows);
+    }
 
+    public List<ServidorDTO> buscarServidoresPorTermo(String termo) {
+        if (termo == null || termo.trim().length() < 3) return List.of();
+        List<Map<String, Object>> rows = repository.buscarServidoresPorTermo(termo.trim());
+        return mapearServidores(rows);
+    }
+
+    private List<ServidorDTO> mapearServidores(List<Map<String, Object>> rows) {
+        List<ServidorDTO> servidores = new ArrayList<>();
         for (Map<String, Object> row : rows) {
             ServidorDTO dto = new ServidorDTO();
             dto.setNumfunc(str(row, "NUMFUNC"));
@@ -56,10 +63,9 @@ public class OrganogramaService {
             dto.setNomeCargo(str(row, "NOME_CARGO_FUNCAO"));
             dto.setTipoCargo(str(row, "TIPO_CARGO"));
             dto.setCodSetor(str(row, "SETOR"));
-            dto.setHierarquiaNum(numero(row, "HIERARQUIA_NUM"));
+            dto.setNomeSetor(str(row, "NOMESETOR"));
             servidores.add(dto);
         }
-
         return servidores;
     }
 
@@ -67,7 +73,7 @@ public class OrganogramaService {
         Object val = row.get(col);
         return val != null ? val.toString().trim() : "";
     }
-    
+
     private Double numero(Map<String, Object> row, String col) {
         Object val = row.get(col);
         if (val == null) return null;

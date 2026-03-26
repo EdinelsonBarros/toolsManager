@@ -18,6 +18,7 @@
     .toolbar {
       background: #fff; border-bottom: 1px solid #dde3ea;
       padding: 12px 32px; display: flex; align-items: center; gap: 12px;
+      position: relative;
     }
     #searchBox {
       flex: 1; max-width: 380px; padding: 8px 14px;
@@ -30,6 +31,58 @@
     }
     .btn:hover { background: #eef2f7; }
 
+    /* ── Painel de resultados de busca ── */
+    #searchResults {
+      display: none;
+      position: absolute;
+      top: 100%; left: 32px;
+      width: 420px;
+      background: #fff;
+      border: 1px solid #ccd3db;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+      z-index: 100;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+    #searchResults.visible { display: block; }
+
+    .result-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f2f5;
+      cursor: default;
+      transition: background .1s;
+    }
+    .result-item:last-child { border-bottom: none; }
+    .result-item:hover { background: #f5f7fa; }
+
+    .result-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #c8d8ec; color: #1a3a5c;
+      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .result-avatar.chefia { background: #ffe082; color: #7a5700; }
+
+    .result-info { display: flex; flex-direction: column; }
+    .result-nome { font-size: 0.85rem; font-weight: 600; color: #1a3a5c; }
+    .result-detalhe { font-size: 0.75rem; color: #667; margin-top: 1px; }
+    .result-setor { font-size: 0.72rem; color: #999; margin-top: 1px; }
+
+    .result-numfunc {
+      margin-left: auto; font-size: 0.75rem;
+      color: #888; white-space: nowrap;
+    }
+
+    .result-empty {
+      padding: 14px; font-size: 0.83rem; color: #999; text-align: center;
+    }
+    .result-loading {
+      padding: 14px; font-size: 0.83rem; color: #aaa; text-align: center;
+    }
+
+    /* ── Árvore ── */
     #treeContainer { padding: 24px 32px 48px; }
     ul.tree { list-style: none; padding: 0; }
     ul.tree ul { padding-left: 28px; border-left: 1.5px solid #dde3ea; margin-left: 10px; }
@@ -82,19 +135,19 @@
 </header>
 
 <div class="toolbar">
-  <input type="text" id="searchBox" placeholder="Buscar setor…">
+  <input type="text" id="searchBox" placeholder="Buscar setor, servidor ou numfunc…" autocomplete="off">
   <button class="btn" onclick="expandAll()">Expandir tudo</button>
   <button class="btn" onclick="collapseAll()">Recolher tudo</button>
+
+  <!-- Painel de resultados de servidores -->
+  <div id="searchResults"></div>
 </div>
 
 <div id="treeContainer">
   <ul class="tree" id="treeRoot">
-
-    <!-- Thymeleaf renderiza os setores raiz -->
     <th:block th:each="setor : ${setores}">
       <li class="node" th:replace="~{setor :: setor(${setor})}"></li>
     </th:block>
-
   </ul>
 </div>
 
@@ -118,7 +171,6 @@
     children.classList.toggle('open');
     icon.classList.toggle('open');
 
-    // Só busca se ainda não carregou os servidores
     const srvContainer = li.querySelector('.servidores-container');
     if (srvContainer && !srvContainer.dataset.loaded) {
       srvContainer.dataset.loaded = 'true';
@@ -132,9 +184,7 @@
             srvContainer.innerHTML = '<li class="loading">Nenhum servidor lotado.</li>';
             return;
           }
-          servidores.forEach(srv => {
-            srvContainer.appendChild(criarNoServidor(srv));
-          });
+          servidores.forEach(srv => srvContainer.appendChild(criarNoServidor(srv)));
         })
         .catch(() => {
           srvContainer.innerHTML = '<li class="loading">Erro ao carregar.</li>';
@@ -142,7 +192,7 @@
     }
   }
 
-  // ── Cria nó de servidor dinamicamente ───────────────────
+  // ── Cria nó de servidor (árvore) ────────────────────────
   function criarNoServidor(srv) {
     const li = document.createElement('li');
     li.className = 'node';
@@ -178,16 +228,101 @@
     return li;
   }
 
-  // ── Busca ────────────────────────────────────────────────
-  document.getElementById('searchBox').addEventListener('input', function() {
-    const termo = this.value.toLowerCase().trim();
+  // ── Busca de servidores ──────────────────────────────────
+  const searchBox    = document.getElementById('searchBox');
+  const resultsPanel = document.getElementById('searchResults');
+  let debounceTimer  = null;
+
+  searchBox.addEventListener('input', function () {
+    const termo = this.value.trim();
+
+    // Menos de 3 caracteres: filtrar setores normalmente e ocultar painel
+    if (termo.length < 3) {
+      fecharPainel();
+      filtrarSetores(termo);
+      return;
+    }
+
+    // 3+ caracteres: esconde filtro de setor e busca servidores
+    mostrarTodosSetores();
+    clearTimeout(debounceTimer);
+    resultsPanel.innerHTML = '<div class="result-loading">Buscando...</div>';
+    resultsPanel.classList.add('visible');
+
+    debounceTimer = setTimeout(() => {
+      fetch(`/api/organograma/buscar?termo=${encodeURIComponent(termo)}`)
+        .then(r => r.json())
+        .then(servidores => renderizarResultados(servidores))
+        .catch(() => {
+          resultsPanel.innerHTML = '<div class="result-empty">Erro ao buscar.</div>';
+        });
+    }, 300);
+  });
+
+  // Fecha painel ao clicar fora
+  document.addEventListener('click', function (e) {
+    if (!searchBox.contains(e.target) && !resultsPanel.contains(e.target)) {
+      fecharPainel();
+    }
+  });
+
+  function fecharPainel() {
+    resultsPanel.classList.remove('visible');
+    resultsPanel.innerHTML = '';
+  }
+
+  function renderizarResultados(servidores) {
+    resultsPanel.innerHTML = '';
+
+    if (servidores.length === 0) {
+      resultsPanel.innerHTML = '<div class="result-empty">Nenhum servidor encontrado.</div>';
+      return;
+    }
+
+    servidores.forEach(srv => {
+      const item = document.createElement('div');
+      item.className = 'result-item';
+
+      const avatar = document.createElement('div');
+      avatar.className = srv.tipoCargo === 'CHEFIA' ? 'result-avatar chefia' : 'result-avatar';
+      const iniciais = srv.nome.split(' ')
+        .filter(p => p.length > 2).slice(0, 2).map(p => p[0]).join('');
+      avatar.textContent = iniciais || '?';
+
+      const info = document.createElement('div');
+      info.className = 'result-info';
+      info.innerHTML = `
+        <span class="result-nome">${srv.nome}</span>
+        <span class="result-detalhe">${srv.nomeCargo || ''}</span>
+        <span class="result-setor">${srv.nomeSetor || srv.codSetor || ''}</span>
+      `;
+
+      const numfunc = document.createElement('span');
+      numfunc.className = 'result-numfunc';
+      numfunc.textContent = srv.numfunc ? `Nº ${srv.numfunc}` : '';
+
+      item.appendChild(avatar);
+      item.appendChild(info);
+      item.appendChild(numfunc);
+      resultsPanel.appendChild(item);
+    });
+  }
+
+  // ── Filtro de setores (comportamento original) ───────────
+  function filtrarSetores(termo) {
     document.querySelectorAll('.node').forEach(node => {
       const label = node.querySelector('.setor-label');
       if (!label) return;
-      node.style.display = (!termo || label.textContent.toLowerCase().includes(termo))
+      node.style.display = (!termo || label.textContent.toLowerCase().includes(termo.toLowerCase()))
         ? '' : 'none';
     });
-  });
+  }
+
+  function mostrarTodosSetores() {
+    document.querySelectorAll('.node').forEach(node => {
+      node.style.display = '';
+    });
+  }
 </script>
 </body>
 </html>

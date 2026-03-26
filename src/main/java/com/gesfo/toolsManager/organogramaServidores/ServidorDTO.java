@@ -11,43 +11,27 @@ public class ServidorDTO {
     private String nomeCargo;
     private String tipoCargo;
     private String codSetor;
+    private String nomeSetor;
     private Double hierarquiaNum;
-	public String getNumfunc() {
-		return numfunc;
-	}
-	public void setNumfunc(String numfunc) {
-		this.numfunc = numfunc;
-	}
-	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	public String getNomeCargo() {
-		return nomeCargo;
-	}
-	public void setNomeCargo(String nomeCargo) {
-		this.nomeCargo = nomeCargo;
-	}
-	public String getTipoCargo() {
-		return tipoCargo;
-	}
-	public void setTipoCargo(String tipoCargo) {
-		this.tipoCargo = tipoCargo;
-	}
-	public String getCodSetor() {
-		return codSetor;
-	}
-	public void setCodSetor(String codSetor) {
-		this.codSetor = codSetor;
-	}
-	public Double getHierarquiaNum() {
-		return hierarquiaNum;
-	}
-	public void setHierarquiaNum(Double hierarquiaNum) {
-		this.hierarquiaNum = hierarquiaNum;
-	}
-    
-    
+
+    public String getNumfunc() { return numfunc; }
+    public void setNumfunc(String numfunc) { this.numfunc = numfunc; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getNomeCargo() { return nomeCargo; }
+    public void setNomeCargo(String nomeCargo) { this.nomeCargo = nomeCargo; }
+
+    public String getTipoCargo() { return tipoCargo; }
+    public void setTipoCargo(String tipoCargo) { this.tipoCargo = tipoCargo; }
+
+    public String getCodSetor() { return codSetor; }
+    public void setCodSetor(String codSetor) { this.codSetor = codSetor; }
+
+    public String getNomeSetor() { return nomeSetor; }
+    public void setNomeSetor(String nomeSetor) { this.nomeSetor = nomeSetor; }
+
+    public Double getHierarquiaNum() { return hierarquiaNum; }
+    public void setHierarquiaNum(Double hierarquiaNum) { this.hierarquiaNum = hierarquiaNum; }
 }
