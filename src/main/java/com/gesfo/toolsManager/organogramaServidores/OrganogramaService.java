@@ -23,8 +23,14 @@ public class OrganogramaService {
         // Monta mapa de setores
         for (Map<String, Object> row : rows) {
             SetorDTO dto = new SetorDTO();
+            
+            Double hierarquia_num = numero(row, "HIERARQUIA_NUM");
+            String nomeSetor = str(row, "NOMESETOR");
+            if(nomeSetor != null && nomeSetor.toUpperCase().startsWith("SUPERI")) {
+            	nomeSetor = nomeSetor.toUpperCase();
+            }else if (hierarquia_num <= 77) {nomeSetor = nomeSetor.toUpperCase();}
             dto.setSetor(str(row, "SETOR"));
-            dto.setNomeSetor(str(row, "NOMESETOR"));
+            dto.setNomeSetor(nomeSetor);
             dto.setPaiSetor(str(row, "PAISETOR"));
             dto.setHierarquia_setores(str(row, "HIERARQUIA_SETORES"));
             dto.setHierarquia_num(str(row, "HIERARQUIA_NUM"));
