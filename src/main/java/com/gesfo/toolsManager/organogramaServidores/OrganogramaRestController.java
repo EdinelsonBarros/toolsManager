@@ -22,4 +22,10 @@ public class OrganogramaRestController {
 	            @RequestParam String setor) {
 	        return ResponseEntity.ok(service.buscarServidoresPorSetor(setor));
 	    }
+	    
+	    @GetMapping("/buscar")
+	    public ResponseEntity<List<ServidorDTO>> buscar(
+	            @RequestParam String termo) {
+	        return ResponseEntity.ok(service.buscarServidoresPorTermo(termo));
+	    }
 }

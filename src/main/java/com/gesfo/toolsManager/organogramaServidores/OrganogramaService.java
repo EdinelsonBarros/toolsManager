@@ -62,6 +62,30 @@ public class OrganogramaService {
 
         return servidores;
     }
+    
+    public List<ServidorDTO> buscarServidoresPorTermo(String termo) {
+        if (termo == null || termo.trim().length() < 3) return List.of();
+        List<Map<String, Object>> rows = repository.buscarServidoresPorTermo(termo.trim());
+        return mapearServidores(rows);
+    }
+    
+    private List<ServidorDTO> mapearServidores(List<Map<String, Object>> rows) {
+        List<ServidorDTO> servidores = new ArrayList<>();
+        for (Map<String, Object> row : rows) {
+            ServidorDTO dto = new ServidorDTO();
+            dto.setNumfunc(str(row, "NUMFUNC"));
+            dto.setNome(str(row, "NOME"));
+            dto.setNomeCargo(str(row, "NOME_CARGO_FUNCAO"));
+            dto.setTipoCargo(str(row, "TIPO_CARGO"));
+            dto.setCodSetor(str(row, "SETOR"));
+            dto.setNomeSetor(str(row, "NOMESETOR"));
+            servidores.add(dto);
+        }
+        return servidores;
+    }
+    
+    
+    
 
     private String str(Map<String, Object> row, String col) {
         Object val = row.get(col);
