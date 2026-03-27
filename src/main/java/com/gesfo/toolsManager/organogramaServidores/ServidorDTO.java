@@ -12,6 +12,8 @@ public class ServidorDTO {
     private String tipoCargo;
     private String codSetor;
     private Double hierarquiaNum;
+    private String nomeSetor;
+    
 	public String getNumfunc() {
 		return numfunc;
 	}
@@ -48,6 +50,13 @@ public class ServidorDTO {
 	public void setHierarquiaNum(Double hierarquiaNum) {
 		this.hierarquiaNum = hierarquiaNum;
 	}
+	public String getNomeSetor() {
+		return nomeSetor;
+	}
+	public void setNomeSetor(String nomeSetor) {
+		this.nomeSetor = nomeSetor;
+	}
     
+	
     
 }

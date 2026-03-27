@@ -24,24 +24,17 @@ public class OrganogramaService {
         for (Map<String, Object> row : rows) {
             SetorDTO dto = new SetorDTO();
             
-            Double hiraquia_num = numero(row, "HIERARQUIA_NUM");
+
+            Double hierarquia_num = numero(row, "HIERARQUIA_NUM");
             String nomeSetor = str(row, "NOMESETOR");
-            if (nomeSetor != null && nomeSetor.toUpperCase().startsWith("SUPERI")) {
-                nomeSetor = nomeSetor.toUpperCase();
-            } else if (hiraquia_num <= 77) { nomeSetor = nomeSetor.toUpperCase();}
-            dto.setNomeSetor(nomeSetor);
-            
+            if(nomeSetor != null && nomeSetor.toUpperCase().startsWith("SUPERI")) {
+            	nomeSetor = nomeSetor.toUpperCase();
+            }else if (hierarquia_num <= 77) {nomeSetor = nomeSetor.toUpperCase();}
             dto.setSetor(str(row, "SETOR"));
-            //dto.setNomeSetor(str(row, "NOMESETOR"));
+            dto.setNomeSetor(nomeSetor);
+
             dto.setPaiSetor(str(row, "PAISETOR"));
             dto.setHierarquia_setores(str(row, "HIERARQUIA_SETORES"));
-            
-
-            
-            if (hiraquia_num <= 77) {
-                nomeSetor = nomeSetor.toUpperCase();
-            }
-            dto.setNomeSetor(nomeSetor);
             
             //dto.setHierarquia_num(str(row, "HIERARQUIA_NUM"));
             mapa.put(dto.getSetor(), dto);
@@ -78,6 +71,30 @@ public class OrganogramaService {
 
         return servidores;
     }
+    
+    public List<ServidorDTO> buscarServidoresPorTermo(String termo) {
+        if (termo == null || termo.trim().length() < 3) return List.of();
+        List<Map<String, Object>> rows = repository.buscarServidoresPorTermo(termo.trim());
+        return mapearServidores(rows);
+    }
+    
+    private List<ServidorDTO> mapearServidores(List<Map<String, Object>> rows) {
+        List<ServidorDTO> servidores = new ArrayList<>();
+        for (Map<String, Object> row : rows) {
+            ServidorDTO dto = new ServidorDTO();
+            dto.setNumfunc(str(row, "NUMFUNC"));
+            dto.setNome(str(row, "NOME"));
+            dto.setNomeCargo(str(row, "NOME_CARGO_FUNCAO"));
+            dto.setTipoCargo(str(row, "TIPO_CARGO"));
+            dto.setCodSetor(str(row, "SETOR"));
+            dto.setNomeSetor(str(row, "NOMESETOR"));
+            servidores.add(dto);
+        }
+        return servidores;
+    }
+    
+    
+    
 
     private String str(Map<String, Object> row, String col) {
         Object val = row.get(col);
