@@ -1,157 +1,35 @@
-<!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>Organograma – Servidores do Tocantins</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #222; }
+/* ============================================================
+   main.js — Organograma + Dark Mode + Indicadores
+   ============================================================ */
 
-    header {
-      background: #1a3a5c; color: #fff;
-      padding: 18px 32px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-    }
-    header h1 { font-size: 1.25rem; font-weight: 600; }
-    header p  { font-size: 0.8rem; opacity: 0.75; margin-top: 2px; }
+// ── Dark / Light Mode ────────────────────────────────────────
+(function () {
+  const btn  = document.getElementById('themeToggle');
+  const icon = document.getElementById('themeIcon');
+  const KEY  = 'tema-organograma';
 
-    .toolbar {
-      background: #fff; border-bottom: 1px solid #dde3ea;
-      padding: 12px 32px; display: flex; align-items: center; gap: 12px;
-      position: relative;
-    }
-    #searchBox {
-      flex: 1; max-width: 380px; padding: 8px 14px;
-      border: 1px solid #ccd3db; border-radius: 6px; font-size: 0.88rem;
-    }
-    .btn {
-      padding: 8px 14px; border: 1px solid #ccd3db; border-radius: 6px;
-      background: #fff; font-size: 0.82rem; cursor: pointer;
-      color: #1a3a5c; font-weight: 500;
-    }
-    .btn:hover { background: #eef2f7; }
+  function aplicarTema(dark) {
+    document.body.classList.toggle('dark', dark);
+    icon.src = dark ? 'icons/sun.png' : 'icons/moon.png';
+    icon.alt = dark ? 'Tema claro'    : 'Tema escuro';
+    localStorage.setItem(KEY, dark ? 'dark' : 'light');
+  }
 
-    /* ── Painel de resultados de busca ── */
-    #searchResults {
-      display: none;
-      position: absolute;
-      top: 100%; left: 32px;
-      width: 420px;
-      background: #fff;
-      border: 1px solid #ccd3db;
-      border-radius: 0 0 8px 8px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.10);
-      z-index: 100;
-      max-height: 360px;
-      overflow-y: auto;
-    }
-    #searchResults.visible { display: block; }
+  // Restaura preferência salva (ou usa preferência do sistema)
+  const salvo = localStorage.getItem(KEY);
+  if (salvo) {
+    aplicarTema(salvo === 'dark');
+  } else {
+    aplicarTema(window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
 
-    .result-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px;
-      border-bottom: 1px solid #f0f2f5;
-      cursor: default;
-      transition: background .1s;
-    }
-    .result-item:last-child { border-bottom: none; }
-    .result-item:hover { background: #f5f7fa; }
+  btn.addEventListener('click', () => {
+    aplicarTema(!document.body.classList.contains('dark'));
+  });
+})();
 
-    .result-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: #c8d8ec; color: #1a3a5c;
-      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .result-avatar.chefia { background: #ffe082; color: #7a5700; }
 
-    .result-info { display: flex; flex-direction: column; }
-    .result-nome { font-size: 0.85rem; font-weight: 600; color: #1a3a5c; }
-    .result-detalhe { font-size: 0.75rem; color: #667; margin-top: 1px; }
-    .result-setor { font-size: 0.72rem; color: #999; margin-top: 1px; }
 
-    .result-numfunc {
-      margin-left: auto; font-size: 0.75rem;
-      color: #888; white-space: nowrap;
-    }
-
-    .result-empty {
-      padding: 14px; font-size: 0.83rem; color: #999; text-align: center;
-    }
-    .result-loading {
-      padding: 14px; font-size: 0.83rem; color: #aaa; text-align: center;
-    }
-
-    /* ── Árvore ── */
-    #treeContainer { padding: 24px 32px 48px; }
-    ul.tree { list-style: none; padding: 0; }
-    ul.tree ul { padding-left: 28px; border-left: 1.5px solid #dde3ea; margin-left: 10px; }
-
-    .node-header {
-      display: flex; align-items: center; gap: 6px;
-      padding: 5px 10px; border-radius: 7px;
-      cursor: pointer; user-select: none; transition: background .12s;
-    }
-    .node-header:hover { background: #e8edf4; }
-
-    .toggle-icon {
-      width: 18px; height: 18px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 4px; background: #dde3ea;
-      font-size: 11px; color: #1a3a5c; font-weight: 700;
-      transition: transform .18s;
-    }
-    .toggle-icon.open { transform: rotate(90deg); }
-
-    .setor-label { font-weight: 600; font-size: 0.88rem; color: #1a3a5c; }
-    .badge {
-      font-size: 0.72rem; background: #dde3ea; color: #445;
-      border-radius: 20px; padding: 1px 8px; font-weight: 500; margin-left: 4px;
-    }
-    .badge.chefia { background: #fff3cd; color: #7a5700; }
-
-    .children { display: none; }
-    .children.open { display: block; }
-
-    .srv-avatar {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: #c8d8ec; color: #1a3a5c;
-      font-size: 0.7rem; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .srv-avatar.chefia { background: #ffe082; color: #7a5700; }
-    .srv-name { font-size: 0.83rem; font-weight: 600; color: #223; }
-    .srv-cargo { font-size: 0.75rem; color: #667; }
-    .srv-info { display: flex; flex-direction: column; }
-
-    .loading { font-size: 0.8rem; color: #999; padding: 6px 10px; }
-  </style>
-</head>
-<body>
-
-<header>
-  <h1>Organograma dos Servidores do Estado do Tocantins</h1>
-  <p>Visualização hierárquica por setor</p>
-</header>
-
-<div class="toolbar">
-  <input type="text" id="searchBox" placeholder="Buscar setor, servidor ou numfunc…" autocomplete="off">
-  <button class="btn" onclick="expandAll()">Expandir tudo</button>
-  <button class="btn" onclick="collapseAll()">Recolher tudo</button>
-
-  <!-- Painel de resultados de servidores -->
-  <div id="searchResults"></div>
-</div>
-
-<div id="treeContainer">
-  <ul class="tree" id="treeRoot">
-    <th:block th:each="setor : ${setores}">
-      <li class="node" th:replace="~{setor :: setor(${setor})}"></li>
-    </th:block>
-  </ul>
-</div>
-
-<script>
   // ── Expandir / Recolher ──────────────────────────────────
   function expandAll() {
     document.querySelectorAll('.children').forEach(c => c.classList.add('open'));
@@ -263,8 +141,10 @@
   });
 
   // Fecha painel ao clicar fora
+  const toolbar = document.querySelector('.toolbar');
+
   document.addEventListener('click', function (e) {
-    if (!searchBox.contains(e.target) && !resultsPanel.contains(e.target)) {
+    if (!toolbar.contains(e.target)) {
       fecharPainel();
     }
   });
@@ -321,11 +201,56 @@
     });
   }
 
+ 
+  // ── Carrega valor total da folha ─────────────────────────
   function mostrarTodosSetores() {
     document.querySelectorAll('.node').forEach(node => {
       node.style.display = '';
     });
   }
-</script>
-</body>
-</html>
+  /*
+  fetch('/custofolha/totalproventos')
+      .then(r => r.json())
+      .then(data => {
+        const el = document.getElementById('valorFolha');
+        el.classList.remove('loading');
+        const valor = typeof data === 'number' ? data : (data.total ?? data.valor ?? 0);
+        el.textContent = valor.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        });
+      })
+      .catch(() => {
+        document.getElementById('valorFolha').textContent = 'Indisponível';
+      });
+	  
+	  */
+	  // ── Carrega todos os indicadores via AJAX ────────────────
+	    fetch('/custofolha/indicadores')
+	      .then(r => r.json())
+	      .then(data => {
+			const d = Array.isArray(data) ? data[0] : data;
+	        preencherCard('ind-proventos',   d.custoProventos);
+	        preencherCard('ind-inss',        d.inss_patronal);
+	        preencherCard('ind-alimentacao', d.vale_alimentacao);
+	        preencherCard('ind-saude',       d.plano_saude_patronal);
+	        preencherCard('ind-chefia',      d.adicional_cargo_chefia);
+	        preencherCard('ind-confianca',   d.funcao_confianca);
+	      })
+	      .catch(() => {
+	        document.querySelectorAll('.card-folha-valor').forEach(el => {
+	          el.textContent = 'Indisponível';
+	          el.classList.remove('loading');
+	        });
+	      });
+
+	    function preencherCard(id, valor) {
+	      const el = document.getElementById(id);
+	      if (!el) return;
+	      el.classList.remove('loading');
+	      const num = valor ?? 0;
+	      el.textContent = Number(num).toLocaleString('pt-BR', {
+	        style: 'currency',
+	        currency: 'BRL'
+	      });
+	    }
