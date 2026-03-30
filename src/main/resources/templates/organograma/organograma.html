@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Organograma – Servidores do Tocantins</title>
-  <head>
-      <link rel="stylesheet" href="css/main2.css">
-  </head>
+      <link rel="stylesheet" th:href="@{/css/main2.css}">
 </head>
 <body>
 
@@ -23,18 +21,21 @@
   <div id="searchResults"></div>
 </div>
 
+
 <div class="main-layout">
-<!-- Árvore de setores -->
+	
+	
+
  <div id="treeContainer">
-   <ul class="tree" id="treeRoot">
-     <th:block th:each="setor : ${setores}">
-       <li class="node" th:replace="~{setor :: setor(${setor})}"></li>
-     </th:block>
-   </ul>
+	<ul class="tree" id="treeRoot">
+		     <th:block th:each="setor : ${setores}">
+		       <li class="node" th:replace="~{organograma/setor :: setor(${setor})}"></li>
+		     </th:block>
+	</ul>
  </div>
 
+ </div>
 
-
-<script src="js/main.js"></script>
+<script th:src="@{/js/main.js}"></script>
 </body>
 </html>

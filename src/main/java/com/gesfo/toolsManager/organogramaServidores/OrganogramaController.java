@@ -20,6 +20,6 @@ public class OrganogramaController {
     @GetMapping("/organograma")
     public String organograma(Model model) {
         model.addAttribute("setores", service.buscarArvoreSetores());
-        return "organograma/organograma2";
+        return "organograma/organograma";
     }
 }
