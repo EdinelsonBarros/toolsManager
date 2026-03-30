@@ -3,129 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Organograma – Servidores do Tocantins</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #222; }
-
-    header {
-      background: #1a3a5c; color: #fff;
-      padding: 18px 32px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-    }
-    header h1 { font-size: 1.25rem; font-weight: 600; }
-    header p  { font-size: 0.8rem; opacity: 0.75; margin-top: 2px; }
-
-    .toolbar {
-      background: #fff; border-bottom: 1px solid #dde3ea;
-      padding: 12px 32px; display: flex; align-items: center; gap: 12px;
-      position: relative;
-    }
-    #searchBox {
-      flex: 1; max-width: 380px; padding: 8px 14px;
-      border: 1px solid #ccd3db; border-radius: 6px; font-size: 0.88rem;
-    }
-    .btn {
-      padding: 8px 14px; border: 1px solid #ccd3db; border-radius: 6px;
-      background: #fff; font-size: 0.82rem; cursor: pointer;
-      color: #1a3a5c; font-weight: 500;
-    }
-    .btn:hover { background: #eef2f7; }
-
-    /* ── Painel de resultados de busca ── */
-    #searchResults {
-      display: none;
-      position: absolute;
-      top: 100%; left: 32px;
-      width: 420px;
-      background: #fff;
-      border: 1px solid #ccd3db;
-      border-radius: 0 0 8px 8px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.10);
-      z-index: 100;
-      max-height: 360px;
-      overflow-y: auto;
-    }
-    #searchResults.visible { display: block; }
-
-    .result-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px;
-      border-bottom: 1px solid #f0f2f5;
-      cursor: default;
-      transition: background .1s;
-    }
-    .result-item:last-child { border-bottom: none; }
-    .result-item:hover { background: #f5f7fa; }
-
-    .result-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: #c8d8ec; color: #1a3a5c;
-      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .result-avatar.chefia { background: #ffe082; color: #7a5700; }
-
-    .result-info { display: flex; flex-direction: column; }
-    .result-nome { font-size: 0.85rem; font-weight: 600; color: #1a3a5c; }
-    .result-detalhe { font-size: 0.75rem; color: #667; margin-top: 1px; }
-    .result-setor { font-size: 0.72rem; color: #999; margin-top: 1px; }
-
-    .result-numfunc {
-      margin-left: auto; font-size: 0.75rem;
-      color: #888; white-space: nowrap;
-    }
-
-    .result-empty {
-      padding: 14px; font-size: 0.83rem; color: #999; text-align: center;
-    }
-    .result-loading {
-      padding: 14px; font-size: 0.83rem; color: #aaa; text-align: center;
-    }
-
-    /* ── Árvore ── */
-    #treeContainer { padding: 24px 32px 48px; }
-    ul.tree { list-style: none; padding: 0; }
-    ul.tree ul { padding-left: 28px; border-left: 1.5px solid #dde3ea; margin-left: 10px; }
-
-    .node-header {
-      display: flex; align-items: center; gap: 6px;
-      padding: 5px 10px; border-radius: 7px;
-      cursor: pointer; user-select: none; transition: background .12s;
-    }
-    .node-header:hover { background: #e8edf4; }
-
-    .toggle-icon {
-      width: 18px; height: 18px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 4px; background: #dde3ea;
-      font-size: 11px; color: #1a3a5c; font-weight: 700;
-      transition: transform .18s;
-    }
-    .toggle-icon.open { transform: rotate(90deg); }
-
-    .setor-label { font-weight: 600; font-size: 0.88rem; color: #1a3a5c; }
-    .badge {
-      font-size: 0.72rem; background: #dde3ea; color: #445;
-      border-radius: 20px; padding: 1px 8px; font-weight: 500; margin-left: 4px;
-    }
-    .badge.chefia { background: #fff3cd; color: #7a5700; }
-
-    .children { display: none; }
-    .children.open { display: block; }
-
-    .srv-avatar {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: #c8d8ec; color: #1a3a5c;
-      font-size: 0.7rem; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .srv-avatar.chefia { background: #ffe082; color: #7a5700; }
-    .srv-name { font-size: 0.83rem; font-weight: 600; color: #223; }
-    .srv-cargo { font-size: 0.75rem; color: #667; }
-    .srv-info { display: flex; flex-direction: column; }
-
-    .loading { font-size: 0.8rem; color: #999; padding: 6px 10px; }
-  </style>
+  <head>
+      <link rel="stylesheet" href="css/main2.css">
+  </head>
 </head>
 <body>
 
@@ -143,186 +23,75 @@
   <div id="searchResults"></div>
 </div>
 
-<div id="treeContainer">
+<div class="main-layout">
+<!-- Árvore de setores -->
+ <div id="treeContainer">
+   <ul class="tree" id="treeRoot">
+     <th:block th:each="setor : ${setores}">
+       <li class="node" th:replace="~{setor :: setor(${setor})}"></li>
+     </th:block>
+   </ul>
+ </div>
+
+
+<!-- Layout: card à esquerda + árvore à direita -->
+
+	<!-- Sidebar: um card por indicador usando o fragmento -->
+	  <div class="sidebar-cards">
+
+	    <div th:replace="~{indicadorCard :: indicadorCard(
+	        titulo='Total de Proventos',
+	        icone='💰',
+	        id='ind-proventos')}">
+	    </div>
+
+	    <div th:replace="~{indicadorCard :: indicadorCard(
+	        titulo='INSS Patronal',
+	        icone='🏛️',
+	        id='ind-inss')}">
+	    </div>
+
+	    <div  th:replace="~{indicadorCard :: indicadorCard(
+	        titulo='Vale Alimentação',
+	        icone='🍽️',
+	        id='ind-alimentacao')}">
+	    </div>
+
+	    <div th:replace="~{indicadorCard :: indicadorCard(
+	        titulo='Plano de Saúde',
+	        icone='🏥',
+	        id='ind-saude')}">
+	    </div>
+
+	    <div th:replace="~{indicadorCard :: indicadorCard(
+	        titulo='Adicional de Chefia',
+	        icone='📋',
+	        id='ind-chefia')}">
+	    </div>
+
+	    <div th:replace="~{indicadorCard :: indicadorCard(
+	        titulo='Função de Confiança',
+	        icone='🔑',
+	        id='ind-confianca')}">
+	    </div>
+
+	  </div>
+	  </div>
+  
+
+ 
+
+
+
+<!--<div id="treeContainer">
   <ul class="tree" id="treeRoot">
     <th:block th:each="setor : ${setores}">
       <li class="node" th:replace="~{setor :: setor(${setor})}"></li>
     </th:block>
   </ul>
-</div>
+</div>-->
 
-<script>
-  // ── Expandir / Recolher ──────────────────────────────────
-  function expandAll() {
-    document.querySelectorAll('.children').forEach(c => c.classList.add('open'));
-    document.querySelectorAll('.toggle-icon').forEach(i => i.classList.add('open'));
-  }
-  function collapseAll() {
-    document.querySelectorAll('.children').forEach(c => c.classList.remove('open'));
-    document.querySelectorAll('.toggle-icon').forEach(i => i.classList.remove('open'));
-  }
 
-  // ── Toggle setor com AJAX ────────────────────────────────
-  function toggleSetor(el, setor) {
-    const li       = el.closest('li');
-    const children = li.querySelector('.children');
-    const icon     = el.querySelector('.toggle-icon');
-
-    children.classList.toggle('open');
-    icon.classList.toggle('open');
-
-    const srvContainer = li.querySelector('.servidores-container');
-    if (srvContainer && !srvContainer.dataset.loaded) {
-      srvContainer.dataset.loaded = 'true';
-      srvContainer.innerHTML = '<li class="loading">Carregando...</li>';
-
-      fetch(`/api/organograma/servidores?setor=${encodeURIComponent(setor)}`)
-        .then(r => r.json())
-        .then(servidores => {
-          srvContainer.innerHTML = '';
-          if (servidores.length === 0) {
-            srvContainer.innerHTML = '<li class="loading">Nenhum servidor lotado.</li>';
-            return;
-          }
-          servidores.forEach(srv => srvContainer.appendChild(criarNoServidor(srv)));
-        })
-        .catch(() => {
-          srvContainer.innerHTML = '<li class="loading">Erro ao carregar.</li>';
-        });
-    }
-  }
-
-  // ── Cria nó de servidor (árvore) ────────────────────────
-  function criarNoServidor(srv) {
-    const li = document.createElement('li');
-    li.className = 'node';
-
-    const header = document.createElement('div');
-    header.className = 'node-header';
-    header.style.cursor = 'default';
-
-    const avatar = document.createElement('div');
-    avatar.className = srv.tipoCargo === 'CHEFIA' ? 'srv-avatar chefia' : 'srv-avatar';
-    const iniciais = srv.nome.split(' ')
-      .filter(p => p.length > 2).slice(0, 2).map(p => p[0]).join('');
-    avatar.textContent = iniciais || '?';
-
-    const info = document.createElement('div');
-    info.className = 'srv-info';
-    info.innerHTML = `
-      <span class="srv-name">${srv.nome}</span>
-      ${srv.nomeCargo ? `<span class="srv-cargo">${srv.nomeCargo}</span>` : ''}
-    `;
-
-    header.appendChild(avatar);
-    header.appendChild(info);
-
-    if (srv.tipoCargo === 'CHEFIA') {
-      const badge = document.createElement('span');
-      badge.className = 'badge chefia';
-      badge.textContent = 'Chefia';
-      header.appendChild(badge);
-    }
-
-    li.appendChild(header);
-    return li;
-  }
-
-  // ── Busca de servidores ──────────────────────────────────
-  const searchBox    = document.getElementById('searchBox');
-  const resultsPanel = document.getElementById('searchResults');
-  let debounceTimer  = null;
-
-  searchBox.addEventListener('input', function () {
-    const termo = this.value.trim();
-
-    // Menos de 3 caracteres: filtrar setores normalmente e ocultar painel
-    if (termo.length < 3) {
-      fecharPainel();
-      filtrarSetores(termo);
-      return;
-    }
-
-    // 3+ caracteres: esconde filtro de setor e busca servidores
-    mostrarTodosSetores();
-    clearTimeout(debounceTimer);
-    resultsPanel.innerHTML = '<div class="result-loading">Buscando...</div>';
-    resultsPanel.classList.add('visible');
-
-    debounceTimer = setTimeout(() => {
-      fetch(`/api/organograma/buscar?termo=${encodeURIComponent(termo)}`)
-        .then(r => r.json())
-        .then(servidores => renderizarResultados(servidores))
-        .catch(() => {
-          resultsPanel.innerHTML = '<div class="result-empty">Erro ao buscar.</div>';
-        });
-    }, 300);
-  });
-
-  // Fecha painel ao clicar fora
-  document.addEventListener('click', function (e) {
-    if (!searchBox.contains(e.target) && !resultsPanel.contains(e.target)) {
-      fecharPainel();
-    }
-  });
-
-  function fecharPainel() {
-    resultsPanel.classList.remove('visible');
-    resultsPanel.innerHTML = '';
-  }
-
-  function renderizarResultados(servidores) {
-    resultsPanel.innerHTML = '';
-
-    if (servidores.length === 0) {
-      resultsPanel.innerHTML = '<div class="result-empty">Nenhum servidor encontrado.</div>';
-      return;
-    }
-
-    servidores.forEach(srv => {
-      const item = document.createElement('div');
-      item.className = 'result-item';
-
-      const avatar = document.createElement('div');
-      avatar.className = srv.tipoCargo === 'CHEFIA' ? 'result-avatar chefia' : 'result-avatar';
-      const iniciais = srv.nome.split(' ')
-        .filter(p => p.length > 2).slice(0, 2).map(p => p[0]).join('');
-      avatar.textContent = iniciais || '?';
-
-      const info = document.createElement('div');
-      info.className = 'result-info';
-      info.innerHTML = `
-        <span class="result-nome">${srv.nome}</span>
-        <span class="result-detalhe">${srv.nomeCargo || ''}</span>
-        <span class="result-setor">${srv.nomeSetor || srv.codSetor || ''}</span>
-      `;
-
-      const numfunc = document.createElement('span');
-      numfunc.className = 'result-numfunc';
-      numfunc.textContent = srv.numfunc ? `Nº ${srv.numfunc}` : '';
-
-      item.appendChild(avatar);
-      item.appendChild(info);
-      item.appendChild(numfunc);
-      resultsPanel.appendChild(item);
-    });
-  }
-
-  // ── Filtro de setores (comportamento original) ───────────
-  function filtrarSetores(termo) {
-    document.querySelectorAll('.node').forEach(node => {
-      const label = node.querySelector('.setor-label');
-      if (!label) return;
-      node.style.display = (!termo || label.textContent.toLowerCase().includes(termo.toLowerCase()))
-        ? '' : 'none';
-    });
-  }
-
-  function mostrarTodosSetores() {
-    document.querySelectorAll('.node').forEach(node => {
-      node.style.display = '';
-    });
-  }
-</script>
+<script src="js/main.js"></script>
 </body>
 </html>

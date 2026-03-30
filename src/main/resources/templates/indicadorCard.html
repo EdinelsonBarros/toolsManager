@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Fragmento: indicadorCard
+  Uso: th:replace="~{indicadorCard :: indicadorCard(titulo='Salários', icone='💼', id='salarios')}"
+  O JavaScript do organograma.html preenche o valor via AJAX pelo id.
+-->
+<th:block th:fragment="indicadorCard(titulo, icone, id)">
+  <div class="card-folha">
+    <div class="card-folha-header">
+      <span class="card-folha-titulo" th:text="${titulo}"></span>
+      <span class="card-folha-icone" th:text="${icone}"></span>
+    </div>
+    <span class="card-folha-valor loading" th:id="${id}">Carregando…</span>
+  </div>
+</th:block>
+
+</body>
+</html>

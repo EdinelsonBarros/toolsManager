@@ -1,3 +1,10 @@
+java -jar toolsManager-0.0.1-PROD.jar
+
+mudar a paleta de cores
+receber dados financeiros
+Fazer grafico da compsisão dos servidores.
+
+
 Preciso elencar os cargos por categoria e nome de acordo com a hierarquia para manipular 
 a ordenação/numeração.
 

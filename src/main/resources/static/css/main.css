@@ -1,0 +1,259 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #222; }
+
+    header {
+      background: #1a3a5c; color: #fff;
+      padding: 18px 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+    header h1 { font-size: 1.25rem; font-weight: 600; }
+    header p  { font-size: 0.8rem; opacity: 0.75; margin-top: 2px; }
+
+    .toolbar {
+      background: #fff; border-bottom: 1px solid #dde3ea;
+      padding: 12px 32px; display: flex; align-items: center; gap: 12px;
+      position: relative;
+    }
+    #searchBox {
+      flex: 1; max-width: 380px; padding: 8px 14px;
+      border: 1px solid #ccd3db; border-radius: 6px; font-size: 0.88rem;
+    }
+    .btn {
+      padding: 8px 14px; border: 1px solid #ccd3db; border-radius: 6px;
+      background: #fff; font-size: 0.82rem; cursor: pointer;
+      color: #1a3a5c; font-weight: 500;
+    }
+    .btn:hover { background: #eef2f7; }
+
+    /* ── Painel de resultados de busca ── */
+    #searchResults {
+      display: none;
+      position: absolute;
+      top: 100%; left: 32px;
+      width: 420px;
+      background: #fff;
+      border: 1px solid #ccd3db;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+      z-index: 100;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+    #searchResults.visible { display: block; }
+
+    .result-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f2f5;
+      cursor: default;
+      transition: background .1s;
+    }
+    .result-item:last-child { border-bottom: none; }
+    .result-item:hover { background: #f5f7fa; }
+
+    .result-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #c8d8ec; color: #1a3a5c;
+      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .result-avatar.chefia { background: #ffe082; color: #7a5700; }
+
+    .result-info { display: flex; flex-direction: column; }
+    .result-nome { font-size: 0.85rem; font-weight: 600; color: #1a3a5c; }
+    .result-detalhe { font-size: 0.75rem; color: #667; margin-top: 1px; }
+    .result-setor { font-size: 0.72rem; color: #999; margin-top: 1px; }
+
+    .result-numfunc {
+      margin-left: auto; font-size: 0.75rem;
+      color: #888; white-space: nowrap;
+    }
+
+    .result-empty {
+      padding: 14px; font-size: 0.83rem; color: #999; text-align: center;
+    }
+    .result-loading {
+      padding: 14px; font-size: 0.83rem; color: #aaa; text-align: center;
+    }
+
+    /* ── Árvore ── */
+    #treeContainer { padding: 24px 32px 48px; }
+    ul.tree { list-style: none; padding: 0; }
+    ul.tree ul { padding-left: 28px; border-left: 1.5px solid #dde3ea; margin-left: 10px; }
+
+    .node-header {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 10px; border-radius: 7px;
+      cursor: pointer; user-select: none; transition: background .12s;
+    }
+    .node-header:hover { background: #e8edf4; }
+
+    .toggle-icon {
+      width: 18px; height: 18px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 4px; background: #dde3ea;
+      font-size: 11px; color: #1a3a5c; font-weight: 700;
+      transition: transform .18s;
+    }
+    .toggle-icon.open { transform: rotate(90deg); }
+
+    .setor-label { font-weight: 600; font-size: 0.88rem; color: #1a3a5c; }
+    .badge {
+      font-size: 0.72rem; background: #dde3ea; color: #445;
+      border-radius: 20px; padding: 1px 8px; font-weight: 500; margin-left: 4px;
+    }
+    .badge.chefia { background: #fff3cd; color: #7a5700; }
+
+    .children { display: none; }
+    .children.open { display: block; }
+
+    .srv-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #c8d8ec; color: #1a3a5c;
+      font-size: 0.7rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .srv-avatar.chefia { background: #ffe082; color: #7a5700; }
+    .srv-name { font-size: 0.83rem; font-weight: 600; color: #223; }
+    .srv-cargo { font-size: 0.75rem; color: #667; }
+    .srv-info { display: flex; flex-direction: column; }
+
+    .loading { font-size: 0.8rem; color: #999; padding: 6px 10px; }
+	
+	
+	/* ── Layout principal: card + árvore lado a lado ── */
+	    .main-layout {
+	      display: flex;
+	      align-items: flex-start;
+	      gap: 24px;
+	      padding: 24px 32px 48px;
+	    }
+
+	    /* ── Card fixado à esquerda ── */
+	    .sidebar-card {
+	      position: sticky;
+	      top: 80px; /* abaixo da toolbar */
+	      flex-shrink: 0;
+	      width: 220px;
+	      display: flex;
+	      flex-direction: column;
+	      gap: 12px;
+	    }
+
+	    .card-folha {
+	      background: linear-gradient(135deg, #1a3a5c, #2a5a9c);
+	      color: #fff;
+	      border-radius: 12px;
+	      padding: 16px 20px;
+	      display: flex;
+	      flex-direction: column;
+	      gap: 6px;
+	      box-shadow: 0 4px 14px rgba(26,58,92,0.22);
+	    }
+
+	    .card-folha-titulo {
+	      font-size: 0.70rem;
+	      font-weight: 600;
+	      opacity: 0.80;
+	      text-transform: uppercase;
+	      letter-spacing: 0.05em;
+	    }
+
+	    .card-folha-valor {
+	      font-size: 1.20rem;
+	      font-weight: 700;
+	      letter-spacing: -0.01em;
+	    }
+
+	    .card-folha-valor.loading {
+	      font-size: 0.80rem;
+	      opacity: 0.65;
+	      font-weight: 400;
+	    }
+
+	    .card-folha-rodape {
+	      font-size: 0.68rem;
+	      opacity: 0.60;
+	      margin-top: 2px;
+	    }
+
+	    /* ── Árvore ocupa o restante ── */
+	    #treeContainer {
+	      flex: 1;
+	      min-width: 0;
+	    }
+		
+		
+		/* ── Layout principal: sidebar + árvore ── */
+		    .main-layout {
+		      display: flex;
+		      align-items: flex-start;
+		      gap: 24px;
+		      padding: 24px 32px 48px;
+		    }
+
+		    /* ── Sidebar com cards ── */
+		    .sidebar-cards {
+		      position: sticky;
+		      top: 80px;
+		      flex-shrink: 0;
+		      width: 220px;
+		      display: flex;
+		      flex-direction: column;
+		      gap: 12px;
+
+		      /* Quando a árvore crescer e sobrepor, os cards fazem wrap */
+		      flex-wrap: wrap;
+		      max-height: calc(100vh - 100px);
+		      overflow-y: auto;
+		    }
+
+		    /* ── Card individual ── */
+		    .card-folha {
+		      background: linear-gradient(135deg, #1a3a5c, #2a5a9c);
+		      color: #fff;
+		      border-radius: 12px;
+		      padding: 14px 18px;
+		      display: flex;
+		      flex-direction: column;
+		      gap: 5px;
+		      box-shadow: 0 4px 14px rgba(26,58,92,0.22);
+		      min-width: 180px;
+		    }
+
+		    .card-folha-header {
+		      display: flex;
+		      align-items: center;
+		      justify-content: space-between;
+		    }
+
+		    .card-folha-titulo {
+		      font-size: 0.68rem;
+		      font-weight: 600;
+		      opacity: 0.80;
+		      text-transform: uppercase;
+		      letter-spacing: 0.05em;
+		    }
+
+		    .card-folha-icone {
+		      font-size: 1.1rem;
+		      opacity: 0.75;
+		    }
+
+		    .card-folha-valor {
+		      font-size: 1.10rem;
+		      font-weight: 700;
+		      letter-spacing: -0.01em;
+		    }
+
+		    .card-folha-valor.loading {
+		      font-size: 0.78rem;
+		      opacity: 0.65;
+		      font-weight: 400;
+		    }
+
+		    /* ── Árvore ocupa o restante ── */
+		    #treeContainer {
+		      flex: 1;
+		      min-width: 0;
+		    }
