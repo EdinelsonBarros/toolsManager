@@ -1,5 +1,9 @@
 java -jar toolsManager-0.0.1-PROD.jar
 
+Como fazer o merge
+	mude para branch que irá recerber as mudanças
+	rode o comando git merge nome da branch que ira puchar as mudanças.
+
 mudar a paleta de cores
 receber dados financeiros
 Fazer grafico da compsisão dos servidores.
