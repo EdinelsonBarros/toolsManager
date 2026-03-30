@@ -39,6 +39,7 @@
    DARK MODE
 =============================== */
 .dark {
+	--my-color-dark:   #d7d7d76;
   --color-primary:    #4A4DD6;
   --color-secondary:  #E07A33;
   --color-accent:     #F0A447;
@@ -46,7 +47,7 @@
   --color-surface:    #1A1A20;
   --color-text:       #E2E2E1;
 
-  --color-primary-dark:   #2B2E9E;
+  --color-primary-dark:   rgb(68, 71, 204);
   --color-primary-light:  #7a7dea;
   --color-border:         rgba(74,77,214,0.22);
   --color-shadow:         rgba(0,0,0,0.45);
@@ -395,7 +396,7 @@ ul.tree ul {
 .setor-label {
   font-weight: 600;
   font-size: 0.88rem;
-  color: var(--color-primary);
+  color: var(--my-color-dark);
 }
 
 .badge {
