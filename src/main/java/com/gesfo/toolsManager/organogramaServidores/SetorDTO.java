@@ -33,6 +33,12 @@ public class SetorDTO {
 	public void setPaiSetor(String paiSetor) {
 		this.paiSetor = paiSetor;
 	}
+	public String getHierarquia_setores() {
+		return hierarquia_setores;
+	}
+	public void setHierarquia_setores(String hierarquia_setores) {
+		this.hierarquia_setores = hierarquia_setores;
+	}
 	public String getHierarquia_num() {
 		return hierarquia_num;
 	}
@@ -45,12 +51,7 @@ public class SetorDTO {
 	public void setFilhos(List<SetorDTO> filhos) {
 		this.filhos = filhos;
 	}
-	public String getHierarquia_setores() {
-		return hierarquia_setores;
-	}
-	public void setHierarquia_setores(String hierarquia_setores) {
-		this.hierarquia_setores = hierarquia_setores;
-	}
+	
 	
 	
 	

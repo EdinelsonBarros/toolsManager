@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Organograma – Servidores do Tocantins</title>
+  <link rel="stylesheet" href="css/main3.css">
+</head>
+<body>
+
+<header>
+  <div class="header-text">
+    <h1>Organograma dos Servidores do Estado do Tocantins</h1>
+    <p>Visualização hierárquica por setor</p>
+  </div>
+
+  <!-- Botão dark/light mode -->
+  <button id="themeToggle" title="Alternar tema" aria-label="Alternar tema claro/escuro">
+    <img id="themeIcon" src="icons/moon.png" alt="Tema escuro">
+  </button>
+</header>
+
+<div class="toolbar">
+  <input type="text" id="searchBox" placeholder="Buscar setor, servidor ou numfunc..." autocomplete="off">
+  <button class="btn" onclick="expandAll()">Expandir tudo</button>
+  <button class="btn" onclick="collapseAll()">Recolher tudo</button>
+
+  <!-- Painel de resultados de servidores -->
+  <div id="searchResults"></div>
+</div>
+
+<div class="main-layout">
+
+
+  <!-- Árvore de setores -->
+  <div id="treeContainer">
+    <ul class="tree" id="treeRoot">
+      <th:block th:each="setor : ${setores}">
+        <li class="node" th:replace="~{organograma/setor :: setor(${setor})}"></li>
+      </th:block>
+    </ul>
+  </div>
+
+</div>
+
+<script src="js/main2.js"></script>
+</body>
+</html>
