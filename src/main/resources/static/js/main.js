@@ -1,3 +1,34 @@
+/* ============================================================
+   main.js — Organograma + Dark Mode + Indicadores
+   ============================================================ */
+
+// ── Dark / Light Mode ────────────────────────────────────────
+(function () {
+  const btn  = document.getElementById('themeToggle');
+  const icon = document.getElementById('themeIcon');
+  const KEY  = 'tema-organograma';
+
+  function aplicarTema(dark) {
+    document.body.classList.toggle('dark', dark);
+    icon.src = dark ? 'icons/sun.png' : 'icons/moon.png';
+    icon.alt = dark ? 'Tema claro'    : 'Tema escuro';
+    localStorage.setItem(KEY, dark ? 'dark' : 'light');
+  }
+
+  // Restaura preferência salva (ou usa preferência do sistema)
+  const salvo = localStorage.getItem(KEY);
+  if (salvo) {
+    aplicarTema(salvo === 'dark');
+  } else {
+    aplicarTema(window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+
+  btn.addEventListener('click', () => {
+    aplicarTema(!document.body.classList.contains('dark'));
+  });
+})();
+
+
 
   // ── Expandir / Recolher ──────────────────────────────────
   function expandAll() {
@@ -107,8 +138,10 @@
   });
 
   // Fecha painel ao clicar fora
+  const toolbar = document.querySelector('.toolbar');
+
   document.addEventListener('click', function (e) {
-    if (!searchBox.contains(e.target) && !resultsPanel.contains(e.target)) {
+    if (!toolbar.contains(e.target)) {
       fecharPainel();
     }
   });
@@ -165,14 +198,14 @@
     });
   }
 
-  /*
+ 
   // ── Carrega valor total da folha ─────────────────────────
   function mostrarTodosSetores() {
     document.querySelectorAll('.node').forEach(node => {
       node.style.display = '';
     });
   }
-  
+  /*
   fetch('/custofolha/totalproventos')
       .then(r => r.json())
       .then(data => {

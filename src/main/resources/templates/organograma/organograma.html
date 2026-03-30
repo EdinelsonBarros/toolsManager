@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>Organograma – Servidores do Tocantins</title>
-      <link rel="stylesheet" th:href="@{/css/main2.css}">
+      <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
 
 <header>
   <h1>Organograma dos Servidores do Estado do Tocantins</h1>
-  <p>Visualização hierárquica por setor</p>
+  
+  <!-- Botão dark/light mode -->
+    <button id="themeToggle" title="Alternar tema" aria-label="Alternar tema claro/escuro">
+      <img id="themeIcon" src="icons/moon.png" alt="Tema escuro">
+    </button>
 </header>
 
 <div class="toolbar">
