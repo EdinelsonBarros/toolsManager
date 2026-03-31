@@ -265,7 +265,7 @@ header {
 =============================== */
 .main-layout {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 20px;
   padding: 24px 32px 48px;
 }
@@ -348,7 +348,7 @@ header {
    ÁRVORE DE SETORES
 =============================== */
 #treeContainer {
-  width: 100%;
+  width: 50%;
   min-width: 0;
   background: var(--color-surface);
   border-radius: 12px;
@@ -356,6 +356,11 @@ header {
   box-shadow: 0 2px 10px var(--color-shadow);
   border: 1px solid var(--color-border);
   transition: var(--transition-theme);
+}
+
+#treemapConteiner {
+	width: 50%; 
+	height: 600px;
 }
 
 ul.tree { list-style: none; padding: 0; }
