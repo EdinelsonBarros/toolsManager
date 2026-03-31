@@ -15,6 +15,7 @@ public class SetorDTO {
     private String hierarquia_setores;
     private String hierarquia_num;
     private List<SetorDTO> filhos = new ArrayList<>();
+    private int quantidadeServ;
 	public String getSetor() {
 		return setor;
 	}
@@ -50,6 +51,12 @@ public class SetorDTO {
 	}
 	public void setFilhos(List<SetorDTO> filhos) {
 		this.filhos = filhos;
+	}
+	public int getQuantidadeServ() {
+		return quantidadeServ;
+	}
+	public void setQuantidadeServ(int quantidadeServ) {
+		this.quantidadeServ = quantidadeServ;
 	}
 	
 	

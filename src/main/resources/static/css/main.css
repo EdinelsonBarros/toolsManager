@@ -359,8 +359,9 @@ header {
 }
 
 #treemapConteiner {
-	width: 50%; 
-	height: 600px;
+	width: 100%;
+    height: 700px;  /* altura fixa obrigatória */
+    min-height: 500px;
 }
 
 ul.tree { list-style: none; padding: 0; }

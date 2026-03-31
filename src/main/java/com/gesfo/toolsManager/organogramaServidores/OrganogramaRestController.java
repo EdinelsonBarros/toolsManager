@@ -28,4 +28,12 @@ public class OrganogramaRestController {
 	            @RequestParam String termo) {
 	        return ResponseEntity.ok(service.buscarServidoresPorTermo(termo));
 	    }
+	    
+	    
+	    @GetMapping("/treemap")
+	    public ResponseEntity<List<SetorDTO>> treemap() {
+	        return ResponseEntity.ok(service.buscarArvoreSetores());
+	    }
+	    
+	    
 }

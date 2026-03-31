@@ -1,5 +1,6 @@
 package com.gesfo.toolsManager.organogramaServidores;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,5 +39,42 @@ public class OrganogramaRepository {
                 """;
         String param = "%" + termo + "%";
         return producaoJdbcTemplate.queryForList(sql, param, param);
+    }
+    
+    
+    public Long buscarQuantServEstado() {
+    	String sql = "SELECT COUNT(1) AS SERVIDORES_ESTADO FROM GTO_VW_ORGANOGRAMA_SERVIDORES";
+    	
+    	return producaoJdbcTemplate.queryForObject(sql, Long.class);
+    }
+    
+    public List<Map<String, Object>> buscarQuantServSetor() {
+    	String sql = " SELECT "
+    			+ "        SETOR, "
+    			+ "        COUNT(1) QUANTIDADE "
+    			+ " FROM GTO_VW_ORGANOGRAMA_SERVIDORES "
+    			+ " GROUP BY SETOR";
+    	
+    	return producaoJdbcTemplate.queryForList(sql);
+    }
+    
+    public Map<String, Integer> buscarQuantidadePorSetor() {
+        String sql = "SELECT SETOR, COUNT(1) QUANTIDADE " +
+                     "FROM GTO_VWM_ORGANOGRAMA_SERVIDORES " +
+                     "GROUP BY SETOR";
+
+        Map<String, Integer> mapa = new LinkedHashMap<>();
+        List<Map<String, Object>> rows = producaoJdbcTemplate.queryForList(sql);
+        for (Map<String, Object> row : rows) {
+            String setor = str(row, "SETOR");
+            int qtd = ((Number) row.get("QUANTIDADE")).intValue();
+            mapa.put(setor, qtd);
+        }
+        return mapa;
+    }
+    
+    private String str(Map<String, Object> row, String col) {
+        Object val = row.get(col);
+        return val != null ? val.toString().trim() : "";
     }
 }

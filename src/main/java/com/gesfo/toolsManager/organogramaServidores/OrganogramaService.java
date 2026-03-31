@@ -17,6 +17,7 @@ public class OrganogramaService {
 
     public List<SetorDTO> buscarArvoreSetores() {
         List<Map<String, Object>> rows = repository.buscarSetores();
+        Map<String, Integer> quantidades = repository.buscarQuantidadePorSetor();
 
         Map<String, SetorDTO> mapa = new LinkedHashMap<>();
 
@@ -35,6 +36,8 @@ public class OrganogramaService {
 
             dto.setPaiSetor(str(row, "PAISETOR"));
             dto.setHierarquia_setores(str(row, "HIERARQUIA_SETORES"));
+            
+            dto.setQuantidadeServ(quantidades.getOrDefault(dto.getSetor(), 0));
             
             //dto.setHierarquia_num(str(row, "HIERARQUIA_NUM"));
             mapa.put(dto.getSetor(), dto);
@@ -94,7 +97,10 @@ public class OrganogramaService {
     }
     
     
-    
+    public Long buscarQuantServEstado() {
+    	Long quantServEst = repository.buscarQuantServEstado();
+    	return quantServEst;
+    }
 
     private String str(Map<String, Object> row, String col) {
         Object val = row.get(col);

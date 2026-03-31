@@ -41,7 +41,7 @@
   }
 
   // ── Toggle setor com AJAX ────────────────────────────────
-  function toggleSetor(el, setor) {
+/*  function toggleSetor(el, setor) {
     const li       = el.closest('li');
     const children = li.querySelector('.children');
     const icon     = el.querySelector('.toggle-icon');
@@ -68,6 +68,44 @@
           srvContainer.innerHTML = '<li class="loading">Erro ao carregar.</li>';
         });
     }
+	window.dispatchEvent(new CustomEvent('setorAtivo', { detail: setor }));
+  }*/
+  
+  function toggleSetor(el, setor) {
+      const li       = el.closest('li');
+      const children = li.querySelector('.children');
+      const icon     = el.querySelector('.toggle-icon');
+
+      children.classList.toggle('open');
+      icon.classList.toggle('open');
+
+      const srvContainer = li.querySelector('.servidores-container');
+      if (srvContainer && !srvContainer.dataset.loaded) {
+          srvContainer.dataset.loaded = 'true';
+          srvContainer.innerHTML = '<li class="loading">Carregando...</li>';
+
+          fetch(`/api/organograma/servidores?setor=${encodeURIComponent(setor)}`)
+              .then(r => r.json())
+              .then(servidores => {
+                  srvContainer.innerHTML = '';
+                  if (servidores.length === 0) {
+                      srvContainer.innerHTML = '<li class="loading">Nenhum servidor lotado.</li>';
+                      return;
+                  }
+                  servidores.forEach(srv => srvContainer.appendChild(criarNoServidor(srv)));
+              })
+              .catch(() => {
+                  srvContainer.innerHTML = '<li class="loading">Erro ao carregar.</li>';
+              });
+      }
+
+      // ← Verifica se o nó tem subsetores filhos antes de atualizar o treemap
+      const temFilhos = li.querySelectorAll(':scope > ul.children > li.node').length > 0;
+
+      if (temFilhos) {
+          window.dispatchEvent(new CustomEvent('setorAtivo', { detail: setor }));
+      }
+      // Se não tem filhos, não dispara o evento — treemap permanece como está
   }
 
   // ── Cria nó de servidor (árvore) ────────────────────────
