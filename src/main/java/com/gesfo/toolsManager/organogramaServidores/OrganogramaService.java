@@ -39,7 +39,7 @@ public class OrganogramaService {
             
             dto.setQuantidadeServ(quantidades.getOrDefault(dto.getSetor(), 0));
             
-            //dto.setHierarquia_num(str(row, "HIERARQUIA_NUM"));
+            dto.setHierarquia_num(numero(row, "HIERARQUIA_NUM"));
             mapa.put(dto.getSetor(), dto);
         }
 

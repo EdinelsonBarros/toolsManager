@@ -359,9 +359,16 @@ header {
 }
 
 #treemapConteiner {
-	width: 100%;
-    height: 700px;  /* altura fixa obrigatória */
-    min-height: 500px;
+	/*width: 100%;
+    height: 700px;   altura fixa obrigatória 
+    min-height: 500px;*/
+	
+	width: 65%;                      /* ← mesma largura do treeContainer */
+	  height: calc(100vh - 130px);     /* ← altura da viewport menos header+toolbar */
+	  min-height: 500px;
+	  position: sticky;                /* ← gruda ao rolar */
+	  top: 20px;                       /* ← distância do topo ao grudar */
+	  align-self: flex-start; 
 }
 
 ul.tree { list-style: none; padding: 0; }

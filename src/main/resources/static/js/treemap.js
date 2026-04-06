@@ -31,6 +31,7 @@ window.addEventListener('load', function () {
             name: setor.setor,
             value: setor.quantidadeServ || 0,
             codSetor: setor.setor,
+			hierarquiaNum: setor.hierarquia_num,
             children: (setor.filhos || []).map(converterParaEcharts)
         };
     }
@@ -58,8 +59,17 @@ window.addEventListener('load', function () {
                 dadosCompletos = setores.map(converterParaEcharts);
 				dadosCompletos.forEach(somarRecursivo);
                 aplicarTreemap(filtrarCod);
+				const secretarias = dadosCompletos
+				    .flatMap(raiz => raiz.children)
+				    .filter(s => s.hierarquiaNum <= 77);
+
+				ultimosDadosValidos = secretarias;
+				
+				
             })
             .catch(() => console.error('Erro ao carregar treemap'));
+			
+			
     }
 
     function aplicarTreemap(filtrarCod) {
