@@ -1,3 +1,23 @@
+nao da para adiar
+a coneção com banco de dev via variavel de ambiente não esta funcionando
+Resolver isso.
+
+digite isso na barro de pesquisa 'msinfo32' e tecle enter para ver as configurações de hardware no windows
+configurações para expor a porta do ubuntu no windows:
+
+netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=8080 connectaddress=(wsl hostname -I)
+
+
+
+
+
+
+
+
+centralizar dados de conexao com banco de dados no aplications.propeperties de forma o ambiente de desenvolvimento
+se conecte ao banco de desenvolvimendo
+
+
 java -jar toolsManager-0.0.1-PROD.jar
 
 Como fazer o merge
