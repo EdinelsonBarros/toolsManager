@@ -10,22 +10,22 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class OrganogramaRepository {
-	private final JdbcTemplate producaoJdbcTemplate;
+	private final JdbcTemplate oracleJdbcTemplate;
 
     public OrganogramaRepository(
-            @Qualifier("producaoJdbcTemplate") JdbcTemplate producaoJdbcTemplate) {
-        this.producaoJdbcTemplate = producaoJdbcTemplate;
+            @Qualifier("oracleJdbcTemplate") JdbcTemplate oracleJdbcTemplate) {
+        this.oracleJdbcTemplate = oracleJdbcTemplate;
     }
 
     public List<Map<String, Object>> buscarSetores() {
         String sql = "SELECT SETOR, NOMESETOR, PAISETOR, HIERARQUIA_SETORES, HIERARQUIA_NUM FROM GTO_VWM_ORGANOGRAMA_SETORES ORDER BY HIERARQUIA_NUM";
-        return producaoJdbcTemplate.queryForList(sql);
+        return oracleJdbcTemplate.queryForList(sql);
     }
 
     public List<Map<String, Object>> buscarServidoresPorSetor(String codSetor) {
 
         String sql = "SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, HIERARQUIA_NUM FROM GTO_VWM_ORGANOGRAMA_SERVIDORES WHERE SETOR = ? ORDER BY HIERARQUIA_SERVIDORES";
-        return producaoJdbcTemplate.queryForList(sql, codSetor);
+        return oracleJdbcTemplate.queryForList(sql, codSetor);
     }
     
     public List<Map<String, Object>> buscarServidoresPorTermo(String termo) {
@@ -38,24 +38,24 @@ public class OrganogramaRepository {
         		) WHERE ROWNUM <= 20
                 """;
         String param = "%" + termo + "%";
-        return producaoJdbcTemplate.queryForList(sql, param, param);
+        return oracleJdbcTemplate.queryForList(sql, param, param);
     }
     
     
     public Long buscarQuantServEstado() {
-    	String sql = "SELECT COUNT(1) AS SERVIDORES_ESTADO FROM GTO_VW_ORGANOGRAMA_SERVIDORES";
+    	String sql = "SELECT COUNT(1) AS SERVIDORES_ESTADO FROM GTO_VWM_ORGANOGRAMA_SERVIDORES";
     	
-    	return producaoJdbcTemplate.queryForObject(sql, Long.class);
+    	return oracleJdbcTemplate.queryForObject(sql, Long.class);
     }
     
     public List<Map<String, Object>> buscarQuantServSetor() {
     	String sql = " SELECT "
     			+ "        SETOR, "
     			+ "        COUNT(1) QUANTIDADE "
-    			+ " FROM GTO_VW_ORGANOGRAMA_SERVIDORES "
+    			+ " FROM GTO_VWM_ORGANOGRAMA_SERVIDORES "
     			+ " GROUP BY SETOR";
     	
-    	return producaoJdbcTemplate.queryForList(sql);
+    	return oracleJdbcTemplate.queryForList(sql);
     }
     
     public Map<String, Integer> buscarQuantidadePorSetor() {
@@ -64,7 +64,7 @@ public class OrganogramaRepository {
                      "GROUP BY SETOR";
 
         Map<String, Integer> mapa = new LinkedHashMap<>();
-        List<Map<String, Object>> rows = producaoJdbcTemplate.queryForList(sql);
+        List<Map<String, Object>> rows = oracleJdbcTemplate.queryForList(sql);
         for (Map<String, Object> row : rows) {
             String setor = str(row, "SETOR");
             int qtd = ((Number) row.get("QUANTIDADE")).intValue();

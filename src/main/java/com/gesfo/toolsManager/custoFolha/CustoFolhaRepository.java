@@ -12,18 +12,18 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class CustoFolhaRepository {
-	private final JdbcTemplate dev1JdbcTemplate;
+	private final JdbcTemplate oracleJdbcTemplate;
 	
 	public CustoFolhaRepository(
-			@Qualifier("dev1JdbcTemplate") JdbcTemplate dev1JdbcTemplate) {
-		this.dev1JdbcTemplate = dev1JdbcTemplate;
+			@Qualifier("oracleJdbcTemplate") JdbcTemplate oracleJdbcTemplate) {
+		this.oracleJdbcTemplate = oracleJdbcTemplate;
 	}
 	
 	public BigDecimal buscarCustoProventos() {
 		String sql = "SELECT NVL(SUM(VALOR), 0) FROM FICHAS_RUBRICAS WHERE RUBRICA = 9995 AND FICHA IN (SELECT FICHA FROM FITABANCO WHERE MES_ANO = TRUNC(SYSDATE, 'MM') AND NUMERO = 1)";
 		try {
 	        // queryForObject(String sql, Class<T> requiredType)
-	        return dev1JdbcTemplate.queryForObject(sql, BigDecimal.class);
+	        return oracleJdbcTemplate.queryForObject(sql, BigDecimal.class);
 	    } catch (EmptyResultDataAccessException e) {
 	        return BigDecimal.ZERO; // Caso não encontre registros
 	    }
@@ -48,7 +48,7 @@ public class CustoFolhaRepository {
 	            + " ) ";
 
 	    // queryForMap é perfeito quando você sabe que o SQL retorna exatamente 1 linha com várias colunas
-	    return dev1JdbcTemplate.queryForMap(sql);
+	    return oracleJdbcTemplate.queryForMap(sql);
 	}
 	
 

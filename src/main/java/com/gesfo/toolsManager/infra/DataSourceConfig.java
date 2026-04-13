@@ -14,33 +14,10 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 public class DataSourceConfig {
-	 // ── PRODUÇÃO ──────────────────────────────────────────────
-    @Bean(name = "producaoDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.producao")
-    public DataSource producaoDataSource() {
-        return DataSourceBuilder.create().build();
-    }
 
-    @Bean(name = "producaoJdbcTemplate")
-    public JdbcTemplate producaoJdbcTemplate(
-            @Qualifier("producaoDataSource") DataSource ds) {
-        return new JdbcTemplate(ds);
-    }
 
-    // ── DIPAG ─────────────────────────────────────────────────
-    @Bean(name = "dipagDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.dipag")
-    public DataSource dipagDataSource() {
-        return DataSourceBuilder.create().build();
-    }
 
-    @Bean(name = "dipagJdbcTemplate")
-    public JdbcTemplate dipagJdbcTemplate(
-            @Qualifier("dipagDataSource") DataSource ds) {
-        return new JdbcTemplate(ds);
-    }
-
-    // ── DEV1 ──────────────────────────────────────────────────
+    // ── Oracle ──────────────────────────────────────────────────
     // Injete usuário e empresa do application.properties
     @Value("${oracle.session.empresa}")
     private int empresa;
@@ -48,31 +25,29 @@ public class DataSourceConfig {
     @Value("${oracle.session.usuario}")
     private String usuario;
 
-    @Bean(name = "dev1DataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.dev1")
-    public DataSource dev1DataSourceBase() {
+    @Bean(name = "oracleDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.oracle")
+    public DataSource oracleDataSourceBase() {
         //return DataSourceBuilder.create().build();
     	
     	DataSource ds = DataSourceBuilder.create().build();
         
         // Log temporário para debug
         HikariDataSource hikari = (HikariDataSource) ds;
-        System.out.println(">>> USUARIO: " + hikari.getUsername());
-        System.out.println(">>> URL: " + hikari.getJdbcUrl());
         
         return ds;
     }
 
     // Sobrescreve o DataSource com o wrapper
-    @Bean(name = "dev1DataSourceWrapped")
-    public DataSource dev1DataSourceWrapped(
-            @Qualifier("dev1DataSource") DataSource base) {
+    @Bean(name = "oracleDataSourceWrapped")
+    public DataSource oracleDataSourceWrapped(
+            @Qualifier("oracleDataSource") DataSource base) {
         return new OracleSessionDataSource(base, empresa, usuario);
     }
 
-    @Bean(name = "dev1JdbcTemplate")
-    public JdbcTemplate dev1JdbcTemplate(
-            @Qualifier("dev1DataSourceWrapped") DataSource ds) {
+    @Bean(name = "oracleJdbcTemplate")
+    public JdbcTemplate oracleJdbcTemplate(
+            @Qualifier("oracleDataSourceWrapped") DataSource ds) {
         return new JdbcTemplate(ds);
     }
 
