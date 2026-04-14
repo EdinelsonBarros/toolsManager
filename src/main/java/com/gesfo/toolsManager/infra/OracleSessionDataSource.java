@@ -9,11 +9,16 @@ import java.sql.Statement;
 public class OracleSessionDataSource extends DelegatingDataSource{
 	private final int empresa;
     private final String usuario;
+    private final String dbuser;
+    private final String dbpass;
+   
 
-    public OracleSessionDataSource(DataSource targetDataSource, int empresa, String usuario) {
+    public OracleSessionDataSource(DataSource targetDataSource, String dbuser, String dbpass) {
         super(targetDataSource);
-        this.empresa = empresa;
-        this.usuario = usuario;
+		this.empresa = 0;
+		this.usuario = "";
+        this.dbuser = dbuser;
+        this.dbpass = dbpass;
     }
 
     @Override
@@ -24,8 +29,8 @@ public class OracleSessionDataSource extends DelegatingDataSource{
     }
 
     @Override
-    public Connection getConnection(String username, String password) throws SQLException {
-        Connection connection = super.getConnection(username, password);
+    public Connection getConnection(String dbuser, String dbpass) throws SQLException {
+        Connection connection = super.getConnection(dbuser, dbpass);
         initSession(connection);
         return connection;
     }

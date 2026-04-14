@@ -19,11 +19,17 @@ public class DataSourceConfig {
 
     // ── Oracle ──────────────────────────────────────────────────
     // Injete usuário e empresa do application.properties
-    @Value("${oracle.session.empresa}")
+    @Value("${app.session.empresa}")
     private int empresa;
 
-    @Value("${oracle.session.usuario}")
+    @Value("${app.session.usuario}")
     private String usuario;
+    
+    @Value("${spring.datasource.oracle.password}")
+    private String dbpass;
+    
+    @Value("${spring.datasource.oracle.username}")
+    private String dbuser;
 
     @Bean(name = "oracleDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.oracle")
@@ -42,8 +48,16 @@ public class DataSourceConfig {
     @Bean(name = "oracleDataSourceWrapped")
     public DataSource oracleDataSourceWrapped(
             @Qualifier("oracleDataSource") DataSource base) {
-        return new OracleSessionDataSource(base, empresa, usuario);
+    	
+    	System.out.println(">>> dbuser = [" + dbuser + "]");
+	    System.out.println(">>> dbpass = [" + dbpass + "]");
+	    System.out.println(">>> usuario = [" + usuario + "]");
+	    System.out.println(">>> empresa = [" + empresa + "]");
+    	
+        return new OracleSessionDataSource(base, dbuser, dbpass);
     }
+    
+    //(DataSource targetDataSource, int empresa, String usuario, String dbuser, String dbpass)
 
     @Bean(name = "oracleJdbcTemplate")
     public JdbcTemplate oracleJdbcTemplate(
