@@ -49,11 +49,6 @@ public class DataSourceConfig {
     public DataSource oracleDataSourceWrapped(
             @Qualifier("oracleDataSource") DataSource base) {
     	
-    	System.out.println(">>> dbuser = [" + dbuser + "]");
-	    System.out.println(">>> dbpass = [" + dbpass + "]");
-	    System.out.println(">>> usuario = [" + usuario + "]");
-	    System.out.println(">>> empresa = [" + empresa + "]");
-    	
         return new OracleSessionDataSource(base, dbuser, dbpass);
     }
     
