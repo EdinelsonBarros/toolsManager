@@ -71,6 +71,9 @@ public class OrganogramaService {
             dto.setHierarquiaNum(numero(row, "HIERARQUIA_NUM"));
             servidores.add(dto);
         }
+        
+        System.out.println(">>> setor recebido = [" + codSetor + "]");
+        System.out.println(">>> setor recebido = [" + servidores + "]");
 
         return servidores;
     }

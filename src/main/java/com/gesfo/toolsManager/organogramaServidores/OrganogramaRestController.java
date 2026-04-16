@@ -18,14 +18,14 @@ public class OrganogramaRestController {
 	    }
 
 	    @GetMapping("/servidores")
-	    public ResponseEntity<List<ServidorDTO>> servidores(
-	            @RequestParam String setor) {
+	    public ResponseEntity<List<ServidorDTO>> servidores(@RequestParam String setor) {
+	    	
 	        return ResponseEntity.ok(service.buscarServidoresPorSetor(setor));
 	    }
 	    
+	    // end point responsavel por retornar dados para campo pesquisa
 	    @GetMapping("/buscar")
-	    public ResponseEntity<List<ServidorDTO>> buscar(
-	            @RequestParam String termo) {
+	    public ResponseEntity<List<ServidorDTO>> buscar(@RequestParam String termo) {
 	        return ResponseEntity.ok(service.buscarServidoresPorTermo(termo));
 	    }
 	    
