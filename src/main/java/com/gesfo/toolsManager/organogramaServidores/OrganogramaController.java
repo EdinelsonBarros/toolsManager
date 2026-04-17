@@ -22,4 +22,10 @@ public class OrganogramaController {
         model.addAttribute("setores", service.buscarArvoreSetores());
         return "organograma/organograma";
     }
+    
+    @GetMapping("/treeServ")
+    public String treeServ() {
+        //model.addAttribute("setores", service.buscarArvoreSetores());
+        return "organograma/treeServ";
+    }
 }

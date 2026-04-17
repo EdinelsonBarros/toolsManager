@@ -19,10 +19,10 @@ public class DataSourceConfig {
 
     // ── Oracle ──────────────────────────────────────────────────
     // Injete usuário e empresa do application.properties
-    @Value("${app.session.empresa}")
+    @Value("${oracle.session.empresa}")
     private int empresa;
 
-    @Value("${app.session.usuario}")
+    @Value("${oracle.session.usuario}")
     private String usuario;
     
     @Value("${spring.datasource.oracle.password}")

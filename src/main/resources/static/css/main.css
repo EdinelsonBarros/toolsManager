@@ -263,11 +263,45 @@ header {
 /* ===============================
    LAYOUT PRINCIPAL
 =============================== */
-.main-layout {
+
+
+/*.main-layout {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 20px;
   padding: 24px 32px 48px;
+}*/
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr; 
+  gap: 20px;
+  padding: 24px 32px 48px;
+  align-items: start;
+}
+
+#treeContainer {
+  grid-column: span 1;
+  width: 100%;
+}
+
+#treemapConteiner {
+  grid-column: span 1;
+  width: 100%;
+  min-height: 500px; /* Garante visibilidade do gráfico */
+  height: 98vh;
+}
+
+#treeServ {
+  grid-column: span 2;
+  width: 100%;
+  min-height: 600px; /* Altura obrigatória para o ECharts renderizar */
+  height: 100vh;
+  overflow: auto;
+  background: var(--color-surface);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
 }
 
 /* ===============================
@@ -348,7 +382,6 @@ header {
    ÁRVORE DE SETORES
 =============================== */
 #treeContainer {
-  width: 50%;
   min-width: 0;
   background: var(--color-surface);
   border-radius: 12px;
@@ -358,18 +391,30 @@ header {
   transition: var(--transition-theme);
 }
 
-#treemapConteiner {
-	/*width: 100%;
+/*#treemapConteiner {
+	width: 100%;
     height: 700px;   altura fixa obrigatória 
-    min-height: 500px;*/
+    min-height: 500px;
 	
-	width: 65%;                      /* ← mesma largura do treeContainer */
-	  height: calc(100vh - 130px);     /* ← altura da viewport menos header+toolbar */
+	width: 65%;                       ← mesma largura do treeContainer 
+	  height: calc(100vh - 130px);      ← altura da viewport menos header+toolbar 
 	  min-height: 500px;
-	  position: sticky;                /* ← gruda ao rolar */
-	  top: 20px;                       /* ← distância do topo ao grudar */
+	  position: sticky;                 ← gruda ao rolar 
+	  top: 20px;                        ← distância do topo ao grudar 
 	  align-self: flex-start; 
-}
+}*/
+
+/*#treeConteiner {
+
+	
+	width: 500px;                      
+	  height: 700px;     
+	  min-height: 500px;	  
+	  top: 20px;                        ← distância do topo ao grudar 
+	  align-self: flex-start; 
+}*/
+
+
 
 ul.tree { list-style: none; padding: 0; }
 

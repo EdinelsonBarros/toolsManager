@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Organograma – Servidores do Tocantins</title>
+	<link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+
+	<header>
+		<h1>Organograma dos Servidores do Estado do Tocantins</h1>
+		
+		<select id="selectSetor">
+		    <option value="">-- Todos os setores --</option>
+		</select>
+
+		<!-- Botão dark/light mode -->
+		<button id="themeToggle" title="Alternar tema" aria-label="Alternar tema claro/escuro">
+			<img id="themeIcon" src="icons/moon.png" alt="Tema escuro">
+		</button>
+	</header>
+
+
+	
+
+	<div class="main-layout">
+
+		<div id="treeServ"></div>
+
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+	<script th:src="@{/js/tree2.js}"></script>
+</body>
+
+</html>

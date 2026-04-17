@@ -97,7 +97,7 @@ window.addEventListener('load', function () {
 			    type: 'treemap',
 			    roam: false,
 				width: '100%',   // ← adicione
-			   	height: '100%',  // ← adicione
+			   	height: '80%',  // ← adicione
 			   	top: 0,          // ← remove margem do topo
 			   	left: 0,         // ← remove margem da esquerda
 			   	right: 0,        // ← remove margem da direita
