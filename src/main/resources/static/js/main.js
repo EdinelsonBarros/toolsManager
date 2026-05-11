@@ -3,6 +3,8 @@
    ============================================================ */
 
 // ── Dark / Light Mode ────────────────────────────────────────
+
+import { montarArvore } from './tree2.js';
 (function () {
   const btn  = document.getElementById('themeToggle');
   const icon = document.getElementById('themeIcon');
@@ -23,12 +25,30 @@
     aplicarTema(window.matchMedia('(prefers-color-scheme: dark)').matches);
   }
 
-  btn.addEventListener('click', () => {
-    aplicarTema(!document.body.classList.contains('dark'));
-  });
+  const treeRoot = document.getElementById('treeRoot');
+  if (treeRoot) {
+      treeRoot.addEventListener('click', function (e) {
+          const header = e.target.closest('.node-header[data-setor]');
+          if (!header) return;
+          const setor = header.dataset.setor;
+          toggleSetor(header, setor);
+      });
+  }
 })();
 
+/*treeRoot.addEventListener('click', function (e) {
+  const header = e.target.closest('.node-header[data-setor]');
+  if (!header) return;
 
+  const setor = header.dataset.setor;
+  toggleSetor(header, setor);
+});
+
+document.getElementById('btnExpandAll')
+  .addEventListener('click', expandAll);
+
+document.getElementById('btnCollapseAll')
+  .addEventListener('click', collapseAll);
 
   // ── Expandir / Recolher ──────────────────────────────────
   function expandAll() {
@@ -39,7 +59,7 @@
     document.querySelectorAll('.children').forEach(c => c.classList.remove('open'));
     document.querySelectorAll('.toggle-icon').forEach(i => i.classList.remove('open'));
   }
-
+  */
   // ── Toggle setor com AJAX ────────────────────────────────
 /*  function toggleSetor(el, setor) {
     const li       = el.closest('li');
@@ -154,7 +174,7 @@
 
   searchBox.addEventListener('input', function () {
     const termo = this.value.trim();
-
+	console.log("Escuto evento")
     // Menos de 3 caracteres: filtrar setores normalmente e ocultar painel
     if (termo.length < 3) {
       fecharPainel();
@@ -203,6 +223,9 @@
     servidores.forEach(srv => {
       const item = document.createElement('div');
       item.className = 'result-item';
+	  item.id = srv.numfunc
+	  
+	  item.addEventListener('click', () => montarArvore(srv.numfunc));
 
       const avatar = document.createElement('div');
       avatar.className = srv.tipoCargo === 'CHEFIA' ? 'result-avatar chefia' : 'result-avatar';
@@ -228,6 +251,8 @@
       resultsPanel.appendChild(item);
     });
   }
+  
+
 
   // ── Filtro de setores (comportamento original) ───────────
   function filtrarSetores(termo) {

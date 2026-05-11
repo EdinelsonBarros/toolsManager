@@ -6,8 +6,7 @@
 
     <!-- Cabeçalho clicável do setor -->
 	<div class="node-header"
-	     th:attr="data-setor=${setor.setor}"
-	     onclick="toggleSetor(this, this.dataset.setor)">
+	     th:attr="data-setor=${setor.setor}">
 	  <span class="toggle-icon">›</span>
 	  <span class="setor-label" th:text="|${setor.nomeSetor} - ${setor.setor}|"></span>
 	</div>
@@ -19,7 +18,7 @@
       <ul class="servidores-container"></ul>
 
       <!-- Subsetores renderizados pelo Thymeleaf recursivamente -->
-      <th:block th:each="filho : ${setor.filhos}">
+      <th:block th:each="filho : ${setor.children}">
         <li th:replace="~{organograma/setor :: setor(${filho})}"></li>
       </th:block>
 

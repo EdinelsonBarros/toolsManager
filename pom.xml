@@ -81,7 +81,18 @@
 			<optional>true</optional>
 		</dependency>
 
-		
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>5.3.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator-core</artifactId>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
@@ -101,7 +112,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				
+
 				<configuration>
 					<excludes>
 						<exclude>

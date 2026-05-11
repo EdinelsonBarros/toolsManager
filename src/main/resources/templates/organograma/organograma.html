@@ -20,8 +20,8 @@
 
 	<div class="toolbar">
 		<input type="text" id="searchBox" placeholder="Buscar setor, servidor ou numfunc…" autocomplete="off">
-		<button class="btn" onclick="expandAll()">Expandir tudo</button>
-		<button class="btn" onclick="collapseAll()">Recolher tudo</button>
+		<button class="btn" id="btnExpandAll">Expandir tudo</button>
+		<button class="btn" id="btnCollapseAll">Recolher tudo</button>
 
 		<!-- Painel de resultados de servidores -->
 		<div id="searchResults"></div>
@@ -47,9 +47,9 @@
 	</div>
 
 	<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-	<script th:src="@{/js/main.js}"></script>
+	<script type="module" th:src="@{/js/main.js}"></script>
 	<script th:src="@{/js/treemap.js}"></script>
-	<script th:src="@{/js/tree.js}"></script>
+	
 </body>
 
 </html>

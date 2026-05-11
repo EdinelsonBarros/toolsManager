@@ -1,5 +1,10 @@
 package com.gesfo.toolsManager.organogramaServidores;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +16,12 @@ public class ServidorDTO {
     private String nomeCargo;
     private String tipoCargo;
     private String codSetor;
+    private String setoresPai;
+    private String paiSetor;
     private Double hierarquiaNum;
+    
+    @JsonProperty("children")
+    private List<ServidorDTO> children = new ArrayList<>();
     private String nomeSetor;
     
 	public String getNumfunc() {
@@ -56,6 +66,26 @@ public class ServidorDTO {
 	public void setNomeSetor(String nomeSetor) {
 		this.nomeSetor = nomeSetor;
 	}
+	public String getPaiSetor() {
+		return paiSetor;
+	}
+	public void setPaiSetor(String paiSetor) {
+		this.paiSetor = paiSetor;
+	}
+	public String getSetoresPai() {
+		return setoresPai;
+	}
+	public void setSetoresPai(String setoresPai) {
+		this.setoresPai = setoresPai;
+	}
+	public List<ServidorDTO> getChildren() {
+		return children;
+	}
+	public void setChildren(ServidorDTO children) {
+		this.children.add(children);
+	}
+	
+	
     
 	
     

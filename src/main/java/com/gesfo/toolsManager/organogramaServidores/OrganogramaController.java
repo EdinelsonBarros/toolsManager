@@ -24,8 +24,8 @@ public class OrganogramaController {
     }
     
     @GetMapping("/treeServ")
-    public String treeServ() {
-        //model.addAttribute("setores", service.buscarArvoreSetores());
+    public String treeServ(Model model) {
+        model.addAttribute("setores", service.buscarArvoreSetores());
         return "organograma/treeServ";
     }
 }

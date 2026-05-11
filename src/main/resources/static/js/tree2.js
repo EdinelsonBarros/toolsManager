@@ -1,213 +1,172 @@
-let ultimosDadosValidos = null;
-let dadosCompletos = [];
-const servidoresCache = {};
+const chartDom = document.getElementById('treeServ');
+const myChart = echarts.init(chartDom, null, {
+    width: 8000,   // canvas interno grande — transborda
+    height: 1000
+});
 
-window.addEventListener('load', function () {
-    const chartDom = document.getElementById('treeServ');
-    const myChart = echarts.init(chartDom);
 
-    // --- Eventos ---
-    window.addEventListener('setorAtivo', (e) => carregarTreeServ(e.detail));
+// ─── Estado global ─────────────────────────────────────────────────────────
 
-    document.getElementById('selectSetor').addEventListener('change', function () {
-        carregarTreeServ(this.value || null);
+window.addEventListener('load', function() {
+
+    // ─── Referências DOM ───────────────────────────────────────────────────────
+
+    const selectSetor = document.getElementById('selectSetor');
+    const btnVoltar = document.getElementById('btnVoltar');
+
+
+
+
+    let ultimoClique = { cod: null, tempo: 0 };
+    const DUPLO_CLICK_MS = 350;
+
+});
+
+function calcularLarguraMaxima(node) {
+    let contagemPorNivel = {};
+
+    function percorrer(n, nivel) {
+        if (!n) return;
+        contagemPorNivel[nivel] = (contagemPorNivel[nivel] || 0) + 1;
+        if (n.children) {
+            n.children.forEach(filho => percorrer(filho, nivel + 1));
+        }
+    }
+
+    percorrer(node, 0);
+    // Retorna o maior valor encontrado em qualquer nível
+    return Math.max(...Object.values(contagemPorNivel));
+}
+
+
+export async function montarArvore(servidor) {
+    //console.log(servidor);
+    const s = await fetch(`/api/organograma/noarvore?servidor=${encodeURIComponent(servidor)}`);
+    if (!s.ok) throw new Error(`Erro ao buscar arvore do servidor ${servidor}`);
+    const dados = await s.json();
+
+
+    const dataMapeada = mapearECharts(dados[0]);
+
+    const larguraMaxima = calcularLarguraMaxima(dataMapeada);
+    const novaLargura = Math.max(window.innerWidth, larguraMaxima * 180);
+
+    console.log("Largura Máxima (nós):", larguraMaxima);
+    console.log("Largura Calculada (px):", novaLargura);
+
+
+    // 3. REDIMENSIONE O CANVAS ANTES DE RENDERIZAR
+    myChart.resize({
+        width: novaLargura,
+        height: 1000 // ou calcule a altura baseado na profundidade da árvore
     });
 
-    myChart.on('click', function (params) {
-        if (!params.data || params.data.isServidor) return;
-        toggleServidoresNoSetor(params.data.codSetor);
-    });
+    renderizarServidores(mapearECharts(dados[0]));
+}
 
-    // --- Processamento de Dados ---
-    function converterParaEcharts(setor) {
-        return {
-            name: setor.setor,
-            value: setor.quantidadeServ || 0,
-            codSetor: setor.setor,
-            hierarquiaNum: setor.hierarquia_num,
-            isServidor: false,
-            _servidoresVisiveis: false,
-            children: (setor.filhos || []).map(converterParaEcharts)
-        };
-    }
+function mapearECharts(node) {
+    return {
+        ...node,
+        name: node.nome, // ECharts exige "name"
+        nomeCargo: node.nomeCargo,
+        children: (node.children || []).map(filho => mapearECharts(filho))
+    };
+}
+/*private String numfunc;
+    private String nome;
+    private String nomeCargo;
+    private String tipoCargo;
+    private String codSetor;
+    private String setoresPai;
+    private String paiSetor;
+    private Double hierarquiaNum;*/
 
-    function encontrarSetor(lista, cod) {
-        for (const s of lista) {
-            if (s.codSetor === cod) return s;
-            const filho = encontrarSetor(s.children || [], cod);
-            if (filho) return filho;
-        }
-        return null;
-    }
 
-    // --- Lógica de Servidores (Chefe como Nó Pai) ---
-    function toggleServidoresNoSetor(codSetor) {
-        const no = encontrarSetor(dadosCompletos, codSetor);
-        if (!no) return;
 
-        // Se já estão visíveis, remove apenas os servidores e mantém os sub-setores
-        if (no._servidoresVisiveis) {
-            no.children = (no.children || []).filter(f => !f.isServidor);
-            no._servidoresVisiveis = false;
-            aplicarTreeServ(no.codSetor);
-            return;
-        }
 
-        if (servidoresCache[codSetor]) {
-            injetarServidores(no, servidoresCache[codSetor]);
-            return;
-        }
 
-        fetch(`/api/organograma/servidores?setor=${encodeURIComponent(codSetor)}`)
-            .then(r => r.json())
-            .then(servidores => {
-                servidoresCache[codSetor] = servidores;
-                injetarServidores(no, servidores);
-            });
-    }
 
-    function injetarServidores(no, servidores) {
-        // Limpa servidores antigos antes de injetar
-        no.children = (no.children || []).filter(f => !f.isServidor);
+// arvore funcional
+// acrescentar outros dados na label
 
-        const chefe = servidores.find(s => s.tipoCargo === 'CHEFIA');
-        const subordinados = servidores.filter(s => s.tipoCargo !== 'CHEFIA');
-        const nosSubordinados = subordinados.map(srv => formatarNoServidor(srv));
-
-        if (chefe) {
-            // O CHEFE vira um nó pai que contém os outros funcionários
-            const noChefe = formatarNoServidor(chefe);
-            noChefe.children = nosSubordinados; 
-            no.children.push(noChefe);
-        } else {
-            // Se não houver chefe definido, lista todos normalmente
-            no.children.push(...nosSubordinados);
-        }
-
-        no._servidoresVisiveis = true;
-        aplicarTreeServ(no.codSetor);
-    }
-
-    function formatarNoServidor(srv) {
-        return {
-            name: srv.nome,
-            isServidor: true,
-            numfunc: srv.numfunc,
-            nomeCargo: srv.nomeCargo,
-            tipoCargo: srv.tipoCargo,
-            symbol: srv.tipoCargo === 'CHEFIA' ? 'diamond' : 'circle',
-            symbolSize: srv.tipoCargo === 'CHEFIA' ? 14 : 10,
-            itemStyle: { 
-                color: srv.tipoCargo === 'CHEFIA' ? '#f59e0b' : '#6366f1',
-                borderColor: '#fff',
-                borderWidth: 1
+function renderizarServidores(data) {
+    //console.log(servidor);
+    myChart.clear()
+    myChart.setOption({
+        tooltip: {
+            trigger: 'item',
+            backgroundColor: 'rgba(17,24,39,0.92)',
+            borderColor: '#374151',
+            textStyle: { color: '#f9fafb', fontSize: 12 },
+            formatter: p => {
+                const d = p.data;
+                if (!d.isServidor) {
+                    return `<b style="color:#fbbf24">${d.name}</b><br>
+                            <span style="color:#9ca3af">${d.nomeCargo || ''}</span><br>
+                            <span style="color:#6366f1">Nº ${d.numfunc || ''}</span>`;
+                }
+                return `<b>${d.name}</b>`;
             }
-        };
-    }
-	
-	
-/*	function extrairSetoresParaSelect(lista) {
-	    return lista.reduce((acc, setor) => {
-	        // 1. Se o setor atual for válido, adiciona à lista
-	        if (setor.hierarquiaNum <= 77) {
-	            acc.push(setor);
-	        }
-	        
-	        // 2. Se o setor tiver filhos, processa os filhos também e junta os resultados
-	        if (setor.children && setor.children.length > 0) {
-	            acc = acc.concat(extrairSetoresParaSelect(setor.children));
-	        }
-	        
-	        return acc;
-	    }, []);
-	}
-	*/
-	
-	
-	
-	
+        },
+        series: [{
+            type: 'tree',
+            data: [data],
+            orient: 'vertical',
+            layout: 'orthogonal',
+            edgeShape: 'polyline',
+            top: 20,
+            left: 20,
+            bottom: 20,
+            right: 20,
+            //zoom: 0.8, 
+            layerPadding: 120,
+            roam: true,
+            symbol: 'roundRect',
+            symbolSize: [140, 80],
+            initialTreeDepth: 1,   // expande tudo
+            expandAndCollapse: false,
+            animationDuration: 400,
+            itemStyle: {
 
-    // --- Renderização (Foco no Nó Pai) ---
-    function aplicarTreeServ(filtrarCod) {
-        let data = null;
-        
-        if (filtrarCod) {
-            data = encontrarSetor(dadosCompletos, filtrarCod);
-        } 
-        
-        // Se não houver filtro ou não encontrar, usa a raiz real do JSON
-        if (!data) {
-            data = dadosCompletos[0]; 
-        }
-
-        ultimosDadosValidos = data;
-
-        // Renderizamos o nó 'data' diretamente como raiz da série
-        const seriesData = [data];
-
-        myChart.setOption({
-            tooltip: {
-                trigger: 'item',
-                formatter: (p) => p.data.isServidor ? `<b>${p.data.name}</b><br>${p.data.nomeCargo}` : `<b>Setor:</b> ${p.name}`
+                color: '#fff',
+                borderColor: '#334155',
+                borderWidth: 1.5,
+                borderRadius: [50, 10, 0, 0]
             },
-            series: [{
-                type: 'tree',
-                data: seriesData,
-                orient: 'vertical',
-                layout: 'orthogonal',
-                edgeShape: 'polyline',
-                symbol: 'rect',
-                symbolSize: [140, 45],
-                initialTreeDepth: 1, // Mostra o pai e o primeiro nível (secretarias)
-                expandAndCollapse: true,
+            label: {
+                color: '#1e3a5f',
+                fontSize: 10,
+                minMargin: 10,
+				borderRadius: [10, 10, 0, 0],
+                formatter: p => {
+                    const n = p.data.name || '';
+                    const partes = n.trim().split(' ').filter(p => p.length > 0);
+                    const curto = partes.length <= 1 ? n : `${partes[0]} ${partes[partes.length - 1]}`;
+                    return curto.length > 20 ? curto.substring(0, 18) + '…' : curto;
+                }
+            },
+            lineStyle: { width: 1.5, color: '#334155' },
+            leaves: {
                 label: {
                     position: 'inside',
+                    color: '#1e3a5f',
+                    borderWidth: 1,
                     fontSize: 10,
-                    color: '#fff',
-                    formatter: (params) => {
-                        const n = params.data.name || '';
-                        return n.length > 20 ? n.substring(0, 18) + '...' : n;
-                    }
-                },
-                lineStyle: { 
-                    width: 2,
-                    color: '#ccc'
-                },
-                leaves: {
-                    label: { position: 'bottom', color: '#333', fontSize: 9 }
+                    minMargin: 10,
+					borderRadius: [10, 10, 0, 0],
+                    formatter: p => {
+						const n = p.data.name || '';
+						const cargo = p.data.nomeCargo || '';
+						const partes = n.trim().split(' ').filter(x => x.length > 0);
+						const curto = partes.length <= 1 ? n : `${partes[0]} ${partes[partes.length - 1]}`;
+						const nomeFormatado = curto.length > 20 ? curto.substring(0, 18) + '…' : curto;
+						const cargoFormatado = cargo.length > 18 ? cargo.substring(0, 16) + '…' : cargo;
+
+						return `${nomeFormatado}}\n${cargoFormatado}`;
+                    },
                 }
-            }]
-        }, true);
-    }
-	
-	
+            }
+        }]
+    }, true);
+}
 
-    function carregarTreeServ() {
-        fetch('/api/organograma/treemap')
-            .then(r => r.json())
-            .then(setores => {
-                // Converte os dados
-                dadosCompletos = setores.map(converterParaEcharts);
-                
-				const select = document.getElementById('selectSetor');
-		        select.innerHTML = '<option value="">Selecione um Setor</option>'; // Limpa o select
-
-		        // Usamos o reduce para pegar TODOS os setores da árvore que são <= 77
-		        const setoresValidos = dadosCompletos;
-
-		        // Agora basta percorrer a lista "achatada" e criar as options
-		        setoresValidos.forEach(s => {
-		            const opt = document.createElement('option');
-		            opt.value = s.codSetor;
-		            opt.textContent = s.name;
-		            select.appendChild(opt);
-		        });
-		        // --- TRECHO COM REDUCE TERMINA AQUI ---
-				console.log(setoresValidos);
-		        aplicarTreeServ(setoresValidos.codSetor);
-    		})
-            .catch(err => console.error("Erro ao carregar:", err));
-    }
-
-    carregarTreeServ();
-});

@@ -21,17 +21,33 @@ public class OrganogramaRepository {
         String sql = "SELECT SETOR, NOMESETOR, PAISETOR, HIERARQUIA_SETORES, HIERARQUIA_NUM FROM GTO_VWM_ORGANOGRAMA_SETORES ORDER BY HIERARQUIA_NUM";
         return oracleJdbcTemplate.queryForList(sql);
     }
+    
+    public ServidorDTO buscarServidor(String numfunc) {
+    	String sql = "SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, NOMESETOR, PAISETOR, HIERARQUIA_NUM FROM GTO_VWM_ORGANOGRAMA_SERVIDORES WHERE NUMFUNC = ?";
+    	return oracleJdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+    	    ServidorDTO dto = new ServidorDTO();
+    	    dto.setNumfunc(rs.getString("NUMFUNC"));
+    	    dto.setNome(rs.getString("NOME"));
+    	    dto.setNomeCargo(rs.getString("NOME_CARGO_FUNCAO"));
+    	    dto.setTipoCargo(rs.getString("TIPO_CARGO"));
+    	    dto.setCodSetor(rs.getString("SETOR"));
+    	    dto.setNomeSetor(rs.getString("NOMESETOR"));
+    	    dto.setPaiSetor(rs.getString("PAISETOR"));
+    	    dto.setHierarquiaNum(rs.getDouble("HIERARQUIA_NUM"));
+    	    return dto;
+    	}, numfunc);
+    }
 
-    public List<Map<String, Object>> buscarServidoresPorSetor(String codSetor) {
-
-        String sql = "SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, HIERARQUIA_NUM FROM GTO_VWM_ORGANOGRAMA_SERVIDORES WHERE SETOR = ? ORDER BY HIERARQUIA_SERVIDORES";
+    public List<Map<String, Object>> buscarServPorSetor(String codSetor) {
+    	
+        String sql = "SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, HIERARQUIA_NUM, PAISETOR FROM GTO_VWM_ORGANOGRAMA_SERVIDORES WHERE SETOR = ? ORDER BY HIERARQUIA_SERVIDORES";
         return oracleJdbcTemplate.queryForList(sql, codSetor);
     }
     
     public List<Map<String, Object>> buscarServidoresPorTermo(String termo) {
         String sql = """
                 SELECT * FROM (
-                SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, NOMESETOR
+                SELECT NUMFUNC, NOME, NOME_CARGO_FUNCAO, TIPO_CARGO, SETOR, HIERARQUIA_NUM, NOMESETOR
         			FROM GTO_VWM_ORGANOGRAMA_SERVIDORES
         		WHERE (UPPER(NOME) LIKE UPPER(?) OR NUMFUNC LIKE ?)
         		ORDER BY HIERARQUIA_SERVIDORES ASC

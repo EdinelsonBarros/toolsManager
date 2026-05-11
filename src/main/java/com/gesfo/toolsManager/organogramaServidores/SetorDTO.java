@@ -14,8 +14,9 @@ public class SetorDTO {
     private String paiSetor;
     private String hierarquia_setores;
     private Double hierarquia_num;
-    private List<SetorDTO> filhos = new ArrayList<>();
+    private List<SetorDTO> children = new ArrayList<>();
     private int quantidadeServ;
+    private String codSetor;
 	public String getSetor() {
 		return setor;
 	}
@@ -46,17 +47,23 @@ public class SetorDTO {
 	public void setHierarquia_num(Double hierarquia_num) {
 		this.hierarquia_num = hierarquia_num;
 	}
-	public List<SetorDTO> getFilhos() {
-		return filhos;
+	public List<SetorDTO> getChildren() {
+		return children;
 	}
-	public void setFilhos(List<SetorDTO> filhos) {
-		this.filhos = filhos;
+	public void setChildren(List<SetorDTO> children) {
+		this.children = children;
 	}
 	public int getQuantidadeServ() {
 		return quantidadeServ;
 	}
 	public void setQuantidadeServ(int quantidadeServ) {
 		this.quantidadeServ = quantidadeServ;
+	}
+	public String getCodSetor() {
+		return codSetor;
+	}
+	public void setCodSetor(String codSetor) {
+		this.codSetor = codSetor;
 	}
 	
 	
